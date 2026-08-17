@@ -1,15 +1,17 @@
-import React from 'react';
-import { Card } from '../Common';
+import React,{useState}from'react';
+import{AlertCircle,Calendar,Eye,Heart,Image,Info,MessageSquare,Monitor,Plus,Send,User,Users,Video}from'lucide-react';
+import'./community.css';
 
-export default function CommunityPage() {
-  return (
-    <div className="container py-8">
-      <Card>
-        <Card.Header title="Community" />
-        <Card.Body>
-          <p className="text-text-secondary">Community features coming soon...</p>
-        </Card.Body>
-      </Card>
-    </div>
-  );
-}
+const tabs=[['forum','Forum',Users],['live','Live Trade',Monitor],['chat','Chat',MessageSquare],['info','Info',AlertCircle]];
+function CommunityHeader({active,setActive}){return <section className="community-header"><h1>COMMUNITY</h1><nav>{tabs.map(([id,label,Icon])=><button className={active===id?'active':''} onClick={()=>setActive(id)} key={id}><Icon/>{label}</button>)}</nav></section>}
+function Avatar({gold=false}){return <span className={`community-avatar ${gold?'gold':''}`}><User/></span>}
+function MemberCard({name,tier}){return <article className="member-card"><div><Avatar/><h3>{name}</h3>{tier&&<b className={tier.toLowerCase()}>{tier}</b>}</div><p>Setup SELL XAUUSD Di Area 3428–3430 Masih Valid. Konfirmasi H1 Engulfing,<br/>SL Maintain 3438.</p><small><Heart fill={name==='Arief S.'?'#d90008':'#fff'}/>93 <MessageSquare fill="#fff"/>29</small></article>}
+function Forum(){return <section className="forum-view"><div className="forum-main"><h2><Calendar/> COMMUNITY FORUM</h2><div className="forum-composer"><span>Tulis Di Forum...</span><div><button><Image/>Foto</button><button><Video/>Video</button><button>Kirim <Send/></button></div></div>{[['Arief S.','SULTAN'],['Dimas P.','PRIME'],['Nanda F.','ELITE'],['Varabi S.','']].map(x=><MemberCard name={x[0]} tier={x[1]} key={x[0]}/>)}</div><aside><h2><Calendar/> TRENDING</h2>{[1,2,3].map(x=><article key={x}><b>NFP Discussion</b><span><Eye/>1.2K Views</span></article>)}</aside></section>}
+function LivePost({name='Varabi S.',tier='SULTAN',right=false,admin=false}){return <article className={`live-post ${right?'right':''} ${admin?'admin':''}`}><div><Avatar gold={admin}/><h3>{name}</h3><b className={tier.toLowerCase()}>{tier}</b><time>09:42</time></div><p>Setup SELL XAUUSD Di Area 3428–3430 Masih Valid. Konfirmasi H1 Engulfing,<br/>SL Maintain 3438.</p></article>}
+function CommentBox(){return <label className="comment-box"><input placeholder="Tulis Komentar..."/><button><Send/></button></label>}
+function LiveTrade(){return <section className="live-view"><div className="live-manage"><h2>LIVE MANAGE</h2><button>Tambah Live (Admin)</button></div><div className="live-screen"><span>● LIVE</span><span><Eye/>283</span></div><div className="live-feed"><LivePost/><LivePost/><LivePost name="Chesta" tier="PRIME" right/><LivePost name="Admin NH" admin/><CommentBox/><i className="fake-scroll"/></div></section>}
+function Chat(){return <section className="chat-view"><aside><h2>CONVERSATIONS</h2>{[['Admin NH','2 New Messages'],['Support',''],['Trading Room','']].map(([name,note],i)=><button className={i===0?'selected':''} key={name}><Avatar gold={i===0}/><span><b>{name}</b>{note&&<small>{note}</small>}</span></button>)}</aside><div className="chat-room"><span className="today">Today</span><div className="bubble received">Selamat Datang Di NH Terminal! Ada Yang Bisa Kami Bantu?</div><div className="bubble sent">Halo Admin, Mau Tanya Soal Upgrade Tier Ke Elite</div><div className="bubble received">Halo! Untuk Tier ELITE Butuh 1.000 Lot Kumulatif Di HFM<br/>Dengan IB Kami. Mau Saya Cek Progress Kamu?</div><CommentBox/></div></section>}
+const notices=[['NFP High Impact — Hari Ini','2 Jam Lalu'],['NFP High Impact — Hari Ini','2 Jam Lalu'],['NFP High Impact — Hari Ini','2 Jam Lalu'],['Reward Program Juli 2026 Dibuka','1 Hari Lalu'],['Reward Program Juli 2026 Dibuka','1 Hari Lalu'],['Reward Program Juli 2026 Dibuka','1 Hari Lalu']];
+function Notice({title,age}){return <article className="notice"><h3>{title}</h3><time>15:30 WIB</time><p>Volatilitas Estimasi 80–150 Pips. Rekomendasi Close Posisi Atau<br/>Perlebar SL Minimal 50 Pips.</p><small>{age}</small><b>Admin NH</b></article>}
+function InfoView(){return <section className="info-view"><div className="announcement-form"><div><h2>ANNOUNCEMENTS</h2><button><Plus/>Create Announcement</button></div><input placeholder="Judul Pengumuman"/><div className="announcement-body"><textarea placeholder="Isi Pengumuman"/><button><Image/>Foto</button><button>Publish <Send/></button></div></div><div className="notices">{notices.map((x,i)=><Notice title={x[0]} age={x[1]} key={i}/>)}</div></section>}
+export default function CommunityPage(){const[active,setActive]=useState('forum');return <div className="community-page"><CommunityHeader active={active} setActive={setActive}/>{active==='forum'&&<Forum/>}{active==='live'&&<LiveTrade/>}{active==='chat'&&<Chat/>}{active==='info'&&<InfoView/>}</div>}

@@ -32,7 +32,7 @@ function AppContent() {
         <Header onTabChange={handleTabChange} onLogout={handleLogout} />
       )}
 
-      <main className="min-h-screen bg-bg-primary">
+      <main className="min-h-screen" style={{ background: '#050a10' }}>
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route

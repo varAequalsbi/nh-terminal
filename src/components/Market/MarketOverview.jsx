@@ -1,15 +1,22 @@
-import React from 'react';
-import { Card } from '../Common';
+import React, { useState } from 'react';
+import { Activity, BarChart2, Calendar, ChevronDown, Search } from 'lucide-react';
+import './market.css';
 
-export default function MarketOverview() {
-  return (
-    <div className="container py-8">
-      <Card>
-        <Card.Header title="Market Overview" />
-        <Card.Body>
-          <p className="text-text-secondary">Market analysis components coming soon...</p>
-        </Card.Body>
-      </Card>
-    </div>
-  );
-}
+const tabs=[['chart','Chart',BarChart2],['outlook','Outlook',Activity],['research','Research',Search],['calendar','Kalender',Calendar]];
+
+function MarketHeader({active,setActive}){return <section className="market-header"><div><h1>MARKET</h1><p>Market Overview</p></div><nav>{tabs.map(([id,label,Icon])=><button key={id} className={active===id?'active':''} onClick={()=>setActive(id)}><Icon/>{label}</button>)}</nav></section>}
+
+function ChartView(){return <section className="chart-view market-panel"><div className="symbol-tabs">{['XAUUSD','EURUSD','GBPUSD','USDJPY','BTCUSD'].map((x,i)=><button className={i===0?'active':''} key={x}>{x}</button>)}</div><div className="chart-placeholder"/></section>}
+
+const sentiment=[['XAUUSD','Bearish 72%',72,'red'],['DXY','Bullish 68%',68,'green'],['BTCUSD','Bullish 74%',74,'green'],['SPX500','Netral 51%',51,'yellow']];
+function OutlookView(){return <section className="outlook-view"><div><h2><Calendar/> DAILY OUTLOOK</h2><article className="outlook-card"><b>NH AI · Daily Outlook</b><h3>XAUUSD: Tekanan Bearish, Waspada NFP</h3><p>Gold Bergerak Di Bawah Resistance 3,435. DXY Yang Menguat<br/>Memberikan Tekanan Pada Emas. Struktur H4 Masih Bearish<br/>Selama Harga Di Bawah 3,440. Menjelang NFP, Pasar Cenderung<br/>Menunggu.</p><div className="levels"><div><strong>Support</strong><span>3,410</span><span>3,395</span><span>3,380</span></div><i/><div><strong>Resistance</strong><span>3,428</span><span>3,445</span><span>3,460</span></div></div></article></div><div><h2><Calendar/> SENTIMEN PASAR</h2><div className="sentiment-list">{sentiment.map(([pair,text,val,tone])=><div className="sentiment-row" key={pair}><b>{pair}</b><span><i className={tone} style={{width:`${val}%`}}/></span><strong>{text}</strong></div>)}</div></div></section>}
+
+const sessions=[['ASIA','Open'],['LONDON','Open'],['NEW YORK','Upcoming'],['NEW YORK','Upcoming']];
+function ResearchView(){return <section className="research-view"><div className="session-cards">{sessions.map(([city,status],i)=><article key={i}><div><b>{city}</b><i/><strong className={status==='Open'?'open':'upcoming'}>{status}</strong><span>07:00–16:00 WIB</span></div><hr/><h4>Market Overview</h4><p>Pasar Asia Sepi. JPY Menguat Tipis Pasca Trade Balance Jepang. Gold<br/>Terbatas Di Kisaran 3,415–3,425.</p></article>)}</div><h2><Calendar/> KEY MARKET DRIVERS</h2><div className="driver-tags">{['DXY Strength','Gold Pressure','NFP Ahead','JPY Weakness'].map(x=><button key={x}><BarChart2/>{x}</button>)}</div><h2><Calendar/> SESSION OVERVIEW</h2><div className="session-overview"><div><h3>Current Session</h3><span>LONDON <i/> <b>Open</b></span></div><u/><div><h3>Next Session</h3><span>New York <i/> <b>Upcoming - 3h 30m</b></span></div><u/><div className="activity"><h3>Market Activity</h3><span>Moderate</span></div><svg viewBox="0 0 250 70" preserveAspectRatio="none"><defs><linearGradient id="marketGreen" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#51ef52" stopOpacity=".3"/><stop offset="1" stopColor="#51ef52" stopOpacity=".08"/></linearGradient></defs><path d="M0 22L57 13L124 27L208 4L250 18L250 70L0 70Z" fill="url(#marketGreen)"/><path d="M0 22L57 13L124 27L208 4L250 18" fill="none" stroke="#57f14e" strokeWidth="3"/></svg></div></section>}
+
+const calendarItems=['high','medium','high','high','low','low','high','high'];
+function Flag(){return <span className="us-flag"><i/><i/><i/><i/><i/><i/></span>}
+function EventRow({tone}){return <article className="market-event"><span className="cal-time">15:30</span><i/><Flag/><i/><b className={tone}>{tone.toUpperCase()}</b><i/><strong>Non-Farm Payrolls</strong><i/><span>Prev 272K</span><i/><span>Forecast 185K</span><div className={`event-bars ${tone}`}><u/><u/><u/></div></article>}
+function CalendarView(){return <section className="calendar-view"><div className="calendar-filters market-panel"><div><button className="active">Today</button><button>Tomorrow</button><button>This Week</button><span/><button className="active compact">All</button><button className="compact">High</button><button className="compact">Medium</button><button className="compact">Low</button></div><hr/><div><label><Search/><input placeholder="Search Event..."/></label><span/><button>Country<ChevronDown/></button><button>Impact<ChevronDown/></button></div></div><div className="event-list">{calendarItems.map((x,i)=><EventRow tone={x} key={i}/>)}</div></section>}
+
+export default function MarketOverview(){const[active,setActive]=useState('chart');return <div className="market-page"><MarketHeader active={active} setActive={setActive}/>{active==='chart'&&<ChartView/>}{active==='outlook'&&<OutlookView/>}{active==='research'&&<ResearchView/>}{active==='calendar'&&<CalendarView/>}</div>}
