@@ -366,12 +366,8 @@ textarea::placeholder {
 }
 
 .active::after {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #d4a574;
-  margin-top: 8px;
+  content: none;
+  display: none;
 }
 
 /* Loading State */
