@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './layout.css';
 
 export function NHLogo() {
-  return <div className="nh-logo" aria-label="NH Terminal"><b>N</b><i /><span>▶</span></div>;
+  return <img className="nh-logo" src="/assets/brand/nh-logo.svg" alt="NH Terminal" />;
 }
 
 export default function Header({ onTabChange, onLogout }) {
