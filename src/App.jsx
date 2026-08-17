@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import Loader from './components/Common/Loader';
+import './mobile.css';
 
 // Lazy load pages for code splitting
 const LoginPage = lazy(() => import('./components/Auth/LoginPage'));
