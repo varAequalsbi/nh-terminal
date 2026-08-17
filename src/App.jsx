@@ -13,7 +13,9 @@ const CommunityPage = lazy(() => import('./components/Community/CommunityPage'))
 const ProfilePage = lazy(() => import('./components/Profile/ProfilePage'));
 
 function AppContent() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => Boolean(localStorage.getItem('authToken'))
+  );
   const navigate = useNavigate();
 
   const handleTabChange = (tab) => {

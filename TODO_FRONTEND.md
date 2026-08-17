@@ -13,7 +13,7 @@ production-ready application.
 - [ ] Add global error boundaries with a friendly recovery screen.
 - [ ] Add route-level loading skeletons matching each page layout.
 - [ ] Add standard empty, loading, error, offline, forbidden, and maintenance states.
-- [ ] Restore authenticated sessions on refresh instead of resetting authentication to `false`.
+- [x] Restore authenticated sessions on refresh instead of resetting authentication to `false`.
 - [ ] Add protected-route guards based on authentication and user role.
 - [ ] Preserve relevant tab/filter state in URL search parameters so views can be bookmarked and shared.
 - [ ] Add a production environment configuration layer for API, WebSocket, CDN, analytics, and feature-flag URLs.
@@ -69,7 +69,7 @@ production-ready application.
 - [ ] Connect “Tambah Signal” and “Publish Signal” to role-restricted create flows.
 - [ ] Validate entry, stop loss, TP1, TP2, symbol, direction, session, and analysis fields.
 - [ ] Add proper symbol selection instead of duplicate Entry fields in the current form.
-- [ ] Implement BUY/SELL segmented selection and clear selected-state feedback.
+- [x] Implement BUY/SELL segmented selection and clear selected-state feedback.
 - [ ] Implement chart upload with drag/drop, file picker, preview, replacement, validation, progress, and cancellation.
 - [ ] Confirm before publishing; prevent duplicate signal publication.
 - [ ] Add edit, close, cancel, and delete controls for authorized experts/admins.
@@ -80,15 +80,15 @@ production-ready application.
 ## 6. Market
 
 - [ ] Replace the Chart placeholder with a real chart provider or first-party chart implementation.
-- [ ] Make XAUUSD, EURUSD, GBPUSD, USDJPY, and BTCUSD tabs load their own data.
+- [x] Make XAUUSD, EURUSD, GBPUSD, USDJPY, and BTCUSD tabs load their own demo data.
 - [ ] Add time-frame controls, crosshair, OHLC tooltip, zoom, pan, and reset view.
 - [ ] Add provider attribution where required by the chart/data license.
 - [ ] Connect Daily Outlook to published analyst content.
 - [ ] Connect sentiment bars to live values and update timestamps.
 - [ ] Make Research session cards reflect actual market hours and the user’s timezone.
 - [ ] Update Current Session, Next Session, countdown, and activity automatically.
-- [ ] Implement Today, Tomorrow, and This Week calendar date filters.
-- [ ] Implement All, High, Medium, and Low impact filters.
+- [x] Implement Today, Tomorrow, and This Week calendar date filters using demo data.
+- [x] Implement All, High, Medium, and Low impact filters using demo data.
 - [ ] Implement Country and Impact dropdown menus with keyboard navigation.
 - [ ] Connect calendar search with debounce and highlighting.
 - [ ] Add event detail expansion with previous, forecast, actual, source, and revision values.
@@ -97,11 +97,11 @@ production-ready application.
 
 ## 7. Community Forum
 
-- [ ] Connect the post composer to create-post API mutations.
+- [x] Connect the post composer to local demo mutations.
 - [ ] Add real multiline input, character limits, draft preservation, and validation.
 - [ ] Implement image/video attachments with preview, progress, cancellation, and removal.
 - [ ] Add post detail pages or expandable threads.
-- [ ] Implement reactions with optimistic updates and duplicate-action protection.
+- [x] Implement local optimistic reaction toggling for the demo.
 - [ ] Implement comments, replies, mentions, and comment counts.
 - [ ] Load profiles, avatars, and membership badges from account data.
 - [ ] Connect Trending topics and view counts.
@@ -125,7 +125,7 @@ production-ready application.
 ## 9. Community Chat
 
 - [ ] Load conversation list and unread counts from the messaging API.
-- [ ] Implement conversation selection and active state.
+- [x] Implement conversation selection and active state.
 - [ ] Send, receive, retry, and delete messages.
 - [ ] Add sending, sent, delivered, read, and failed states.
 - [ ] Add WebSocket reconnect, deduplication, ordering, and missed-message recovery.
@@ -138,7 +138,7 @@ production-ready application.
 ## 10. Community Info and announcements
 
 - [ ] Restrict announcement creation to authorized roles.
-- [ ] Implement title/body input, validation, draft state, and publishing confirmation.
+- [x] Implement announcement title/body input, basic validation, and local demo publishing.
 - [ ] Implement optional image upload and preview.
 - [ ] Add scheduled publishing, expiry, pinning, editing, and deletion.
 - [ ] Load announcement cards from the API with pagination.
@@ -153,7 +153,7 @@ production-ready application.
 - [ ] Load reward tiers, thresholds, prizes, and availability from configuration/API.
 - [ ] Handle tier upgrades, downgrades, pending verification, and reward claim state.
 - [ ] Make Reward Program, Education, Settings, and Help actions functional.
-- [ ] Connect education cards to a course/video player.
+- [x] Connect education cards to an interactive demo playback state.
 - [ ] Implement progress tracking, resume position, completion status, and locked-course access.
 - [ ] Add accessible captions/transcripts and playback-speed controls.
 - [ ] Show a clear upgrade path for premium courses.
@@ -225,4 +225,3 @@ production-ready application.
 - [ ] Every supplied design has passed desktop and responsive visual comparison.
 - [ ] Accessibility, browser support, performance budgets, and automated tests pass in CI.
 - [ ] No dummy data remains in the production build unless explicitly labeled as demo content.
-

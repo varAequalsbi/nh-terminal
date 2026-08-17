@@ -68,31 +68,39 @@ function SignalCard({ item }) {
   );
 }
 
-function SignalForm() {
+function SignalForm({ onPublish }) {
+  const [type, setType] = useState('BUY');
+  const [form, setForm] = useState({ entry: '', sl: '', tp1: '', tp2: '', note: '' });
+  const update = (key) => (event) => setForm({ ...form, [key]: event.target.value });
+  const publish = () => {
+    if (!form.entry || !form.sl || !form.tp1) return window.alert('Entry, Stop Loss, and TP 1 are required.');
+    onPublish([type, 0, true]);
+    setForm({ entry: '', sl: '', tp1: '', tp2: '', note: '' });
+  };
   return (
     <section className="new-signal-panel">
       <h2>SIGNAL BARU</h2>
       <div className="signal-form-grid">
         <div className="signal-type">
           <label>SIGNAL TYPE</label>
-          <button className="selected-buy">BUY</button>
-          <button>SELL</button>
+          <button className={type === 'BUY' ? 'selected-buy' : ''} onClick={() => setType('BUY')}>BUY</button>
+          <button className={type === 'SELL' ? 'selected-buy' : ''} onClick={() => setType('SELL')}>SELL</button>
         </div>
         <div className="form-divider" />
         <div className="field-column">
-          <label>Entry</label><input aria-label="Entry" />
-          <label>Stop Loss</label><input aria-label="Stop Loss" />
-          <label>TP 1</label><input aria-label="TP 1" />
-          <label>TP 2 (Opsional)</label><input aria-label="TP 2" />
+          <label>Entry</label><input aria-label="Entry" value={form.entry} onChange={update('entry')} />
+          <label>Stop Loss</label><input aria-label="Stop Loss" value={form.sl} onChange={update('sl')} />
+          <label>TP 1</label><input aria-label="TP 1" value={form.tp1} onChange={update('tp1')} />
+          <label>TP 2 (Opsional)</label><input aria-label="TP 2" value={form.tp2} onChange={update('tp2')} />
         </div>
         <div className="form-divider" />
         <div className="field-column publish-column">
-          <label>Entry</label><input aria-label="Second entry" />
-          <label>Catatan / Analisa</label><input aria-label="Catatan" />
+          <label>Symbol</label><input aria-label="Symbol" value="XAUUSD" readOnly />
+          <label>Catatan / Analisa</label><input aria-label="Catatan" value={form.note} onChange={update('note')} />
           <label>Upload Chart</label>
           <div className="upload-row">
-            <button className="upload-button" aria-label="Upload chart"><ImageDown size={54} /></button>
-            <button className="publish-button">PUBLISH SIGNAL</button>
+            <label className="upload-button" aria-label="Upload chart"><ImageDown size={54} /><input type="file" accept="image/*" hidden /></label>
+            <button className="publish-button" onClick={publish}>PUBLISH SIGNAL</button>
           </div>
         </div>
       </div>
@@ -102,21 +110,30 @@ function SignalForm() {
 
 export default function SignalsPage() {
   const [mode, setMode] = useState('ai');
-  const cards = useMemo(() => signalSeed.slice(0, mode === 'expert' ? 6 : 10), [mode]);
+  const [signals, setSignals] = useState(signalSeed);
+  const [query, setQuery] = useState('');
+  const [history, setHistory] = useState(false);
+  const [sortNewest, setSortNewest] = useState(true);
+  const cards = useMemo(() => {
+    let result = signals.slice(0, mode === 'expert' ? 6 : 10);
+    if (query && !'XAUUSD'.includes(query.replace('/','').toUpperCase())) result = [];
+    if (!sortNewest) result = [...result].reverse();
+    return result;
+  }, [mode, signals, query, sortNewest]);
 
   return (
     <div className="signals-page">
       <section className="signals-heading">
         <div><h1>SIGNALS</h1><p>Live Trading Signals</p></div>
         <div className="heading-actions">
-          <button>View History</button>
+          <button onClick={() => setHistory(!history)}>{history ? 'View Active' : 'View History'}</button>
           {mode === 'ai'
-            ? <button className="admin-button"><PlusCircle size={17} /> Tambah Signal (Admin)</button>
+            ? <button className="admin-button" onClick={() => setMode('expert')}><PlusCircle size={17} /> Tambah Signal (Admin)</button>
             : <button className="admin-button"><X size={17} /> Tutup</button>}
         </div>
       </section>
 
-      {mode === 'expert' && <SignalForm />}
+      {mode === 'expert' && <SignalForm onPublish={(item) => { setSignals([item, ...signals]); window.alert('Demo signal published.'); }} />}
 
       <section className="mode-bar">
         <div className="mode-buttons">
@@ -129,15 +146,14 @@ export default function SignalsPage() {
       <section className="filters-section">
         <h2><Search /> FILTER SIGNALS</h2>
         <div className="filters-bar">
-          <label className="search-field"><Search /><input placeholder="Search XAUUSD..." /></label>
-          {['Session', 'Status', 'Result', 'Newest'].map((filter) => (
-            <button key={filter}>{filter}<ChevronDown size={18} fill="currentColor" /></button>
-          ))}
+          <label className="search-field"><Search /><input placeholder="Search XAUUSD..." value={query} onChange={(e) => setQuery(e.target.value)} /></label>
+          {['London Session', history ? 'Completed' : 'Running', 'All Results'].map((filter) => <button key={filter} onClick={() => window.alert(`${filter} demo filter selected`)}>{filter}<ChevronDown size={18} fill="currentColor" /></button>)}
+          <button onClick={() => setSortNewest(!sortNewest)}>{sortNewest ? 'Newest' : 'Oldest'}<ChevronDown size={18} fill="currentColor" /></button>
         </div>
       </section>
 
       <section className="signals-grid">
-        {cards.map((item, index) => <SignalCard item={item} key={index} />)}
+        {cards.length ? cards.map((item, index) => <SignalCard item={item} key={index} />) : <p>No matching signals.</p>}
       </section>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState}from 'react';
 import { Award, BookOpen, Briefcase, Eye, HelpCircle, Lock, Play, Settings } from 'lucide-react';
 import './profile.css';
 
@@ -6,7 +6,7 @@ const tiers=[['SULTAN','1.500 Lot','IPhone 17 Pro Max','future'],['ELITE','1.000
 const videos=['INTRODUCTION TO TRADING','MARKET STRUCTURE','SUPPLY & DEMAND','FIBONACCI STRATEGY','BEHIND THE CANDLESTICK','BASIC OF NEWS TRADING'];
 
 function TierRoadmap(){return <div className="tier-roadmap">{tiers.map(([name,lot,reward,state])=><div className={`tier-step ${state}`} key={name}><i/><b>{name}</b><span><em>{lot}</em><u/>{reward}</span></div>)}</div>}
-function VideoCard({title,index}){const locked=index>2;return <article className={`education-card ${locked?'locked':''}`}><h3><b>{index}.</b> {title}</h3><div className="video-screen">{locked?<div><span><Lock/></span><strong>Premium</strong></div>:<Play/>}</div><footer><span>NH TECHNICAL - 12:30</span><span><Eye/>1.2K Views</span></footer></article>}
+function VideoCard({title,index}){const locked=index>2;const[playing,setPlaying]=useState(false);return <article className={`education-card ${locked?'locked':''}`} onClick={()=>locked?window.alert('Upgrade your tier to unlock this lesson.'):setPlaying(!playing)}><h3><b>{index}.</b> {title}</h3><div className="video-screen">{locked?<div><span><Lock/></span><strong>Premium</strong></div>:playing?<strong>Playing demo lesson…</strong>:<Play/>}</div><footer><span>NH TECHNICAL - 12:30</span><span><Eye/>1.2K Views</span></footer></article>}
 
 export default function ProfilePage(){return <div className="profile-page">
   <section className="profile-summary"><div className="profile-identity"><div className="profile-avatar">NH</div><div><h1>NAUFAL H.</h1><p>@Naufalh - IB 380359</p><b>PRIME</b></div></div><div className="profile-progress"><div><span>Progress Ke - <b>ELITE</b></span><strong>734 / 1,000 Lot</strong></div><div className="progress-track"><i/></div><small>266 Lot Lagi Ke ELITE</small><nav><button><Award/>Reward Program</button><button><BookOpen/>Edukasi</button><button><Settings/>Pengaturan</button><button><HelpCircle/>Bantuan</button></nav></div></section>
