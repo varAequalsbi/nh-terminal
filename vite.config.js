@@ -29,12 +29,11 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'charts': ['recharts'],
         },
       },
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'axios', 'zustand', 'recharts'],
+    include: ['react', 'react-dom', 'react-router-dom', 'axios', 'zustand'],
   },
 })

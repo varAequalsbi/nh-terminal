@@ -1,12 +1,15 @@
-import React from 'react';
+import React,{useEffect,useMemo,useState}from 'react';
 import { ArrowRight, BarChart2, Bell, Calendar, Clock, Crosshair, DollarSign } from 'lucide-react';
 import './dashboard.css';
 
 function PriceGraph() {
+  const [points,setPoints]=useState(()=>Array.from({length:24},(_,i)=>({x:i*31,y:40+Math.random()*150})));
+  useEffect(()=>{const timer=setInterval(()=>setPoints(old=>[...old.slice(1).map((p,i)=>({...p,x:i*31})),{x:713,y:35+Math.random()*170}]),1800);return()=>clearInterval(timer)},[]);
+  const line=useMemo(()=>points.map((p,i)=>`${i?'L':'M'}${p.x} ${p.y.toFixed(1)}`).join(' '),[points]);
   return <svg className="price-graph" viewBox="0 0 720 220" preserveAspectRatio="none" aria-label="XAU/USD intraday price chart">
     <defs><linearGradient id="priceFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#df0007" stopOpacity=".23"/><stop offset="1" stopColor="#df0007" stopOpacity=".08"/></linearGradient></defs>
-    <path d="M0 28 L96 127 L116 103 L160 155 L173 22 L209 58 L219 104 L257 150 L311 181 L335 122 L354 116 L371 64 L401 54 L432 10 L447 29 L463 116 L482 137 L495 121 L503 176 L520 149 L554 205 L579 171 L603 159 L630 91 L657 55 L672 18 L691 120 L704 134 L713 205 L720 220 L0 220Z" fill="url(#priceFill)"/>
-    <path d="M0 28 L96 127 L116 103 L160 155 L173 22 L209 58 L219 104 L257 150 L311 181 L335 122 L354 116 L371 64 L401 54 L432 10 L447 29 L463 116 L482 137 L495 121 L503 176 L520 149 L554 205 L579 171 L603 159 L630 91 L657 55 L672 18 L691 120 L704 134 L713 205" fill="none" stroke="#e1060c" strokeWidth="4"/>
+    <path d={`${line} L713 220 L0 220Z`} fill="url(#priceFill)"/>
+    <path d={line} fill="none" stroke="#e1060c" strokeWidth="4" className="live-chart-line"/>
   </svg>;
 }
 

@@ -110,6 +110,7 @@ function SignalForm({ onPublish }) {
 
 export default function SignalsPage() {
   const [mode, setMode] = useState('ai');
+  const [showAdminForm, setShowAdminForm] = useState(false);
   const [signals, setSignals] = useState(signalSeed);
   const [query, setQuery] = useState('');
   const [history, setHistory] = useState(false);
@@ -127,13 +128,13 @@ export default function SignalsPage() {
         <div><h1>SIGNALS</h1><p>Live Trading Signals</p></div>
         <div className="heading-actions">
           <button onClick={() => setHistory(!history)}>{history ? 'View Active' : 'View History'}</button>
-          {mode === 'ai'
-            ? <button className="admin-button" onClick={() => setMode('expert')}><PlusCircle size={17} /> Tambah Signal (Admin)</button>
-            : <button className="admin-button"><X size={17} /> Tutup</button>}
+          <button className="admin-button" onClick={() => setShowAdminForm(!showAdminForm)}>
+            {showAdminForm ? <><X size={17} /> Tutup</> : <><PlusCircle size={17} /> Tambah Signal (Admin)</>}
+          </button>
         </div>
       </section>
 
-      {mode === 'expert' && <SignalForm onPublish={(item) => { setSignals([item, ...signals]); window.alert('Demo signal published.'); }} />}
+      {showAdminForm && <SignalForm onPublish={(item) => { setSignals([item, ...signals]); setShowAdminForm(false); window.alert('Demo signal published.'); }} />}
 
       <section className="mode-bar">
         <div className="mode-buttons">
