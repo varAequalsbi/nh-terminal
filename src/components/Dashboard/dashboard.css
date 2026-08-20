@@ -617,7 +617,7 @@
 }
 
 .ohlc span {
-    width: 126px;
+    width: fit-content;
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
