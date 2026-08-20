@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  oxc: false,
   server: {
     port: 5173,
     strictPort: false,
@@ -21,15 +22,16 @@ export default defineConfig({
       },
     },
   },
-  esbuild: false,
   build: {
     target: 'ES2020',
     minify: 'terser',
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
+        manualChunks(id) {
+          if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react')) {
+            return 'vendor'
+          }
         },
       },
     },
