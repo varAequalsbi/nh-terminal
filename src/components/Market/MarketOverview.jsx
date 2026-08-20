@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Activity, BarChart2, Calendar, ChevronDown, Search } from 'lucide-react';
 import './market.css';
 
 const tabs=[['chart','Chart',BarChart2],['outlook','Outlook',Activity],['research','Research',Search],['calendar','Kalender',Calendar]];
 
-function MarketHeader({active,setActive}){return <section className="market-header"><div><h1>MARKET</h1><p>Market Overview</p></div><nav>{tabs.map(([id,label,Icon])=><button key={id} className={active===id?'active':''} onClick={()=>setActive(id)}><Icon/>{label}</button>)}</nav></section>}
+function MarketHeader({active,setActive}){
+    return <section className="market-header"><div><h1>MARKET</h1><p>Market Overview</p></div><nav>{tabs.map(([id,label,Icon])=><button key={id} className={active===id?'active':''} onClick={()=>setActive(id)}><Icon/>{label}</button>)}</nav></section>
+}
 
 function ChartView(){const[symbol,setSymbol]=useState('XAUUSD');const[data,setData]=useState(()=>Array.from({length:32},(_,i)=>({x:i*30,y:170+Math.random()*220})));useEffect(()=>{setData(Array.from({length:32},(_,i)=>({x:i*30,y:170+Math.random()*220})))},[symbol]);useEffect(()=>{const timer=setInterval(()=>setData(old=>[...old.slice(1).map((p,i)=>({...p,x:i*30})),{x:930,y:140+Math.random()*260}]),1400);return()=>clearInterval(timer)},[]);const line=useMemo(()=>data.map((p,i)=>`${i?'L':'M'}${p.x} ${p.y.toFixed(1)}`).join(' '),[data]);return <section className="chart-view market-panel"><div className="symbol-tabs">{['XAUUSD','EURUSD','GBPUSD','USDJPY','BTCUSD'].map(x=><button onClick={()=>setSymbol(x)} className={symbol===x?'active':''} key={x}>{x}</button>)}</div><div className="chart-placeholder"><span className="demo-chart-label">{symbol} · Live dummy feed</span><svg className="market-demo-chart" viewBox="0 0 930 550" preserveAspectRatio="none"><defs><linearGradient id="marketDemoFill" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#c49a22" stopOpacity=".3"/><stop offset="1" stopColor="#c49a22" stopOpacity=".02"/></linearGradient></defs><path d={`${line} L930 550 L0 550Z`} fill="url(#marketDemoFill)"/><path d={line} fill="none" stroke="#c49a22" strokeWidth="3"/></svg></div></section>}
 
@@ -19,4 +22,32 @@ function Flag(){return <img className="us-flag" src="https://cdn.jsdelivr.net/gh
 function EventRow({tone}){return <article className="market-event"><span className="cal-time">15:30</span><i/><Flag/><i/><b className={tone}>{tone.toUpperCase()}</b><i/><strong>Non-Farm Payrolls</strong><i/><span>Prev 272K</span><i/><span>Forecast 185K</span><div className={`event-bars ${tone}`}><u/><u/><u/></div></article>}
 function CalendarView(){const[period,setPeriod]=useState('Today');const[impact,setImpact]=useState('All');const[query,setQuery]=useState('');const items=calendarItems.filter(x=>(impact==='All'||x===impact.toLowerCase())&&'Non-Farm Payrolls'.toLowerCase().includes(query.toLowerCase()));return <section className="calendar-view"><div className="calendar-filters market-panel"><div>{['Today','Tomorrow','This Week'].map(x=><button className={period===x?'active':''} onClick={()=>setPeriod(x)} key={x}>{x}</button>)}<span/>{['All','High','Medium','Low'].map(x=><button className={`${impact===x?'active ':''}compact`} onClick={()=>setImpact(x)} key={x}>{x}</button>)}</div><hr/><div><label><Search/><input placeholder="Search Event..." value={query} onChange={e=>setQuery(e.target.value)}/></label><span/><button onClick={()=>window.alert('Country: United States (demo)')}>Country<ChevronDown/></button><button onClick={()=>setImpact(impact==='All'?'High':'All')}>Impact<ChevronDown/></button></div></div><div className="event-list">{items.map((x,i)=><EventRow tone={x} key={i}/>)}</div></section>}
 
-export default function MarketOverview(){const[active,setActive]=useState('chart');return <div className="market-page"><MarketHeader active={active} setActive={setActive}/>{active==='chart'&&<ChartView/>}{active==='outlook'&&<OutlookView/>}{active==='research'&&<ResearchView/>}{active==='calendar'&&<CalendarView/>}</div>}
+export default function MarketOverview(){
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const validTabs = ['chart', 'outlook', 'research', 'calendar'];
+  const resolvedTab = tabParam === 'kalender' ? 'calendar' : tabParam;
+
+  const [active, setActive] = useState(() => (resolvedTab && validTabs.includes(resolvedTab) ? resolvedTab : 'chart'));
+
+  useEffect(() => {
+    if (resolvedTab && validTabs.includes(resolvedTab)) {
+      setActive(resolvedTab);
+    }
+  }, [resolvedTab]);
+
+  const handleTabChange = (tabId) => {
+    setActive(tabId);
+    setSearchParams({ tab: tabId });
+  };
+
+  return (
+    <div className="market-page">
+      <MarketHeader active={active} setActive={handleTabChange}/>
+      {active==='chart'&&<ChartView/>}
+      {active==='outlook'&&<OutlookView/>}
+      {active==='research'&&<ResearchView/>}
+      {active==='calendar'&&<CalendarView/>}
+    </div>
+  );
+}
