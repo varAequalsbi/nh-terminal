@@ -23,7 +23,7 @@ export default defineConfig({
     },
   },
   build: {
-    target: 'ES2020',
+    target: 'es2022',
     minify: 'terser',
     sourcemap: false,
     rollupOptions: {
