@@ -1,6 +1,7 @@
-import React,{useState}from'react';
-import{AlertCircle,Calendar,Eye,Heart,Image,MessageSquare,Monitor,Plus,Send,User,Users,Video}from'lucide-react';
-import'./community.css';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { AlertCircle, Calendar, Eye, Heart, Image, MessageSquare, Monitor, Plus, Send, User, Users, Video } from 'lucide-react';
+import './community.css';
 const tabs=[['forum','Forum',Users],['live','Live Trade',Monitor],['chat','Chat',MessageSquare],['info','Info',AlertCircle]];
 const seedPosts=[['Arief S.','SULTAN'],['Dimas P.','PRIME'],['Nanda F.','ELITE'],['Varabi S.','']];
 const seedNotices=[['NFP High Impact — Hari Ini','2 Jam Lalu'],['NFP High Impact — Hari Ini','2 Jam Lalu'],['NFP High Impact — Hari Ini','2 Jam Lalu'],['Reward Program Juli 2026 Dibuka','1 Hari Lalu'],['Reward Program Juli 2026 Dibuka','1 Hari Lalu'],['Reward Program Juli 2026 Dibuka','1 Hari Lalu']];
@@ -14,4 +15,33 @@ function LiveTrade(){const[comments,setComments]=useState([]);const[inputUrl,set
 function Chat(){const[conversation,setConversation]=useState('Admin NH');const[messages,setMessages]=useState(['Halo Admin, Mau Tanya Soal Upgrade Tier Ke Elite']);return <section className="chat-view"><aside><h2>CONVERSATIONS</h2>{[['Admin NH','2 New Messages'],['Support',''],['Trading Room','']].map(([name,note],i)=><button onClick={()=>setConversation(name)} className={conversation===name?'selected':''} key={name}><Avatar gold={i===0}/><span><b>{name}</b>{note&&<small>{note}</small>}</span></button>)}</aside><div className="chat-room"><span className="today">Today · {conversation}</span><div className="bubble received">Selamat Datang Di NH Terminal! Ada Yang Bisa Kami Bantu?</div>{messages.map((x,i)=><div className="bubble sent" key={i}>{x}</div>)}<div className="bubble received">Pesan demo diterima. Tim kami akan segera membalas.</div><CommentBox onSend={x=>setMessages([...messages,x])}/></div></section>}
 function Notice({title,age}){return <article className="notice"><h3>{title}</h3><time>15:30 WIB</time><p>Volatilitas Estimasi 80–150 Pips. Rekomendasi Close Posisi Atau Perlebar SL Minimal 50 Pips.</p><small>{age}</small><b>Admin NH</b></article>}
 function InfoView(){const[title,setTitle]=useState('');const[body,setBody]=useState('');const[notices,setNotices]=useState(seedNotices);return <section className="info-view"><div className="announcement-form"><div><h2>ANNOUNCEMENTS</h2><button onClick={()=>document.querySelector('.announcement-form input')?.focus()}><Plus/>Create Announcement</button></div><input placeholder="Judul Pengumuman" value={title} onChange={e=>setTitle(e.target.value)}/><div className="announcement-body"><textarea placeholder="Isi Pengumuman" value={body} onChange={e=>setBody(e.target.value)}/><label className="file-action"><Image/>Foto<input hidden type="file" accept="image/*"/></label><button onClick={()=>{if(title.trim()&&body.trim()){setNotices([[title,'Baru saja'],...notices]);setTitle('');setBody('')}}}>Publish <Send/></button></div></div><div className="notices">{notices.map((x,i)=><Notice title={x[0]} age={x[1]} key={i}/>)}</div></section>}
-export default function CommunityPage(){const[active,setActive]=useState('forum');return <div className="community-page"><Header active={active} setActive={setActive}/>{active==='forum'&&<Forum/>}{active==='live'&&<LiveTrade/>}{active==='chat'&&<Chat/>}{active==='info'&&<InfoView/>}</div>}
+export default function CommunityPage(){
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const validTabs = ['forum', 'live', 'chat', 'info'];
+  const tabAlias = { announcement: 'info', announcements: 'info', pengumuman: 'info' };
+  const resolvedTab = tabAlias[tabParam] || tabParam;
+
+  const [active, setActive] = useState(() => (resolvedTab && validTabs.includes(resolvedTab) ? resolvedTab : 'forum'));
+
+  useEffect(() => {
+    if (resolvedTab && validTabs.includes(resolvedTab)) {
+      setActive(resolvedTab);
+    }
+  }, [resolvedTab]);
+
+  const handleTabChange = (tabId) => {
+    setActive(tabId);
+    setSearchParams({ tab: tabId });
+  };
+
+  return (
+    <div className="community-page">
+      <Header active={active} setActive={handleTabChange}/>
+      {active==='forum'&&<Forum/>}
+      {active==='live'&&<LiveTrade/>}
+      {active==='chat'&&<Chat/>}
+      {active==='info'&&<InfoView/>}
+    </div>
+  );
+}

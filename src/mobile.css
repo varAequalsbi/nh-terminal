@@ -1,77 +1,1053 @@
 /* Final responsive layer: loaded after page styles to protect mobile layouts. */
-html,body,#root{max-width:100%;overflow-x:hidden}
-
-@media(max-width:767px){
-  body{font-size:14px}
-  button,input,textarea,select{font-size:16px}
-
-  /* Shared shell */
-  .site-header{height:82px;position:relative;z-index:50}
-  .header-inner{height:82px;margin:0;padding:0 16px;max-width:none}
-  .logo-button .nh-logo{width:44px;height:52px;transform:none}
-  .header-tools{height:46px;padding:5px;gap:0}
-  .header-tools .settings{width:38px;height:36px;padding:8px;font-size:0}
-  .header-tools>button:not(.settings):not(.menu){width:38px;padding:8px}
-  .header-tools .menu{display:flex;width:38px;padding:8px}
-  .header-inner nav{position:absolute;display:none;top:70px;left:12px;right:12px;height:auto;padding:8px;border:1px solid #2b3744;border-radius:14px;background:#101823;box-shadow:0 18px 45px rgba(0,0,0,.6);flex-direction:column}
-  .header-inner nav.open{display:flex}
-  .header-inner nav button{width:100%;min-height:44px;text-align:left}
-  .site-footer{margin:42px 16px 20px;max-width:none}
-  .footer-main{display:grid;grid-template-columns:1fr 1fr;gap:28px 18px}
-  .footer-brand{grid-column:1/-1;gap:18px}
-  .footer-brand .nh-logo{width:66px;height:76px;transform:none}
-  .footer-brand p{font-size:13px}
-  .footer-links{gap:7px}.footer-links h3{font-size:15px}.footer-links a{font-size:12px}
-  .footer-links:last-child{display:flex}
-  .footer-bottom{height:auto;margin-top:28px;padding:14px;gap:12px;flex-direction:column;font-size:11px}
-  .footer-bottom div{gap:16px;flex-wrap:wrap;justify-content:center}
-
-  /* Dashboard */
-  .dashboard-page{width:100%;padding:0 12px}
-  .market-hero{display:block}.market-card{height:330px;padding:18px 16px}.market-copy{display:block}
-  .current-price{font-size:36px;letter-spacing:.02em}.current-price b{font-size:11px;padding:4px 10px}
-  .market-copy small{font-size:9px}.ohlc{display:none}.price-graph{margin-top:12px;min-height:185px}
-  .stats-column{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}
-  .dash-stat{height:88px}.dash-stat strong{font-size:18px}.dash-stat span{font-size:8px;text-align:center}.dash-stat svg{width:21px}
-  .calendar-section,.latest-section,.news-sentiment{margin-top:42px}
-  .dash-section-title{align-items:center}.dash-section-title h2{font-size:19px;gap:7px}.dash-section-title h2 svg{width:21px}.dash-section-title p{font-size:11px;margin-left:28px}
-  .dash-section-title button{height:34px;padding:0 10px;font-size:11px}
-  .calendar-row{height:59px;padding:0 9px;gap:7px;font-size:10px}.calendar-row>i{height:27px}.event-time{width:62px;height:31px}.calendar-row>b{padding:4px 6px}.impact-bars u{width:4px;height:18px}
-  .latest-card{height:auto;padding:13px}.latest-meta{height:45px;padding:0 8px;gap:6px}.latest-meta>em{display:none}.latest-meta>strong{font-size:11px}.latest-meta>span{font-size:9px}.latest-meta>b{width:52px;font-size:9px}
-  .latest-metrics{grid-template-columns:1fr 1fr;gap:8px}.dash-signal-metric{height:68px;padding:10px}.dash-signal-metric strong{font-size:15px}
-  .news-sentiment{display:block}.sentiment{border:0;padding:0;margin-top:30px}.announcement-card{height:auto;min-height:145px}.announcement-card h3{font-size:16px}.announcement-card p br{display:none}
-  .sentiment-card{height:auto}.sentiment-item{display:block;width:100%}
-
-  /* Signals */
-  .signals-page{width:100%;padding:0 12px}.signals-heading{height:auto;min-height:78px;padding:13px}.signals-heading h1{font-size:22px}.heading-actions{gap:7px}.heading-actions button{height:38px;padding:0 10px;font-size:10px}.heading-actions .admin-button{display:flex;min-width:0;font-size:0}.heading-actions .admin-button svg{margin:0}
-  .new-signal-panel{padding:14px}.signal-form-grid{display:block}.form-divider{display:none}.signal-type{margin-bottom:16px}.field-column{margin-bottom:14px}.publish-column{display:flex!important}.upload-row{align-items:stretch}.upload-button{height:75px;width:80px}.publish-button{height:75px}
-  .mode-bar{height:auto;align-items:stretch}.mode-buttons{width:100%;gap:7px}.mode-buttons button{min-width:0;height:43px;font-size:10px;padding:0 8px}.mode-buttons button svg{width:20px}.signal-count{align-self:flex-end;padding:6px 14px;font-size:11px}
-  .filters-section{margin-top:28px}.filters-section h2{font-size:20px}.filters-bar{height:auto;grid-template-columns:1fr 1fr;gap:7px;padding:9px}.search-field{grid-column:1/-1}.filters-bar button{display:flex!important;padding:0 10px;font-size:10px}.filters-bar button:nth-of-type(n+3){display:none!important}
-  .signals-grid{grid-template-columns:1fr;gap:13px;margin-top:22px}.signal-card{height:auto;min-height:235px;padding:13px 11px}.signal-meta{font-size:8px}.published{font-size:9px}.card-data{grid-template-columns:1.8fr 1fr}.signal-metric{padding:8px}.signal-note{font-size:10px}
-
-  /* Market */
-  .market-page{width:100%;padding:0 12px}.market-header{height:auto}.market-header>div{height:82px;padding:15px}.market-header h1{font-size:23px}.market-header nav{height:auto;padding:9px;grid-template-columns:1fr 1fr;gap:7px;overflow:visible}.market-header nav button{height:43px;padding:0 12px;font-size:11px}
-  .chart-view{height:510px;margin-top:22px;padding:11px}.symbol-tabs{overflow-x:auto;padding-bottom:4px}.symbol-tabs button{min-width:105px;height:42px}.chart-placeholder{height:410px;margin-top:14px}.market-demo-chart{inset:50px 10px 10px;width:calc(100% - 20px);height:calc(100% - 60px)}
-  .outlook-view{grid-template-columns:1fr;margin-top:32px}.outlook-view h2,.research-view h2{font-size:21px}.outlook-card{height:auto;padding:20px 16px}.outlook-card p br{display:none}.levels{height:180px;padding:20px;gap:18px}.sentiment-row{grid-template-columns:65px 1fr 95px;padding:0 9px;font-size:11px}
-  .research-view{margin-top:25px}.session-cards{grid-template-columns:1fr}.session-cards article{height:auto;min-height:150px;padding:15px}.session-cards article>div>span{font-size:10px}.session-cards p br{display:none}.driver-tags{overflow-x:auto}.driver-tags button{min-width:155px}.session-overview{height:auto;display:grid;grid-template-columns:1fr;gap:15px}.session-overview>u{display:none}.session-overview svg{display:block;height:60px}
-  .calendar-view{margin-top:24px}.calendar-filters{height:auto}.calendar-filters>div{height:auto;min-height:62px;overflow-x:auto;padding:8px}.calendar-filters button{min-width:105px;height:42px}.calendar-filters>div:last-child span,.calendar-filters>div:last-child button{display:none}.calendar-filters label{min-width:100%;width:100%}.event-list{margin-top:20px}.market-event{height:67px;padding:0 8px;gap:7px}.cal-time{width:64px;height:36px}.us-flag{width:36px;height:25px}.market-event>i{height:30px}.market-event>strong{font-size:9px}.market-event>span:not(.cal-time),.market-event>i:nth-of-type(n+3){display:none}.event-bars u{width:4px;height:22px}
-
-  /* Community */
-  .community-page{width:100%;padding:0 12px}.community-header{height:auto;padding:13px;gap:12px}.community-header h1{font-size:23px}.community-header nav{grid-template-columns:1fr 1fr;width:100%;gap:7px}.community-header nav button{height:43px;font-size:11px}
-  .forum-view{grid-template-columns:1fr;margin-top:30px}.forum-view aside{display:none}.forum-view h2{font-size:20px}.forum-composer{height:210px;padding:16px}.forum-composer textarea{height:125px}.forum-composer button,.file-action{min-width:0;padding:0 10px;font-size:11px}
-  .member-card{height:auto;min-height:155px;padding:16px;margin-top:13px}.member-card h3,.live-post h3{font-size:17px}.member-card p br,.live-post p br{display:none}
-  .live-view{margin-top:24px}.live-manage{height:auto;padding:13px;display:block}.live-manage h2{font-size:20px;margin-bottom:10px}.youtube-admin{display:grid;grid-template-columns:1fr}.youtube-admin input{width:100%}.youtube-admin button{width:100%;height:42px;flex-basis:auto!important}.live-screen{height:260px}.live-post{width:94%;height:auto;min-height:110px;padding:14px}.live-post.right{margin-left:6%}.live-post time{font-size:10px}.fake-scroll{display:none}.comment-box{height:51px}
-  .chat-view{height:720px;margin-top:25px;grid-template-columns:1fr}.chat-view>aside{display:none}.chat-room{padding:80px 12px 15px}.bubble{width:92%;padding:15px;font-size:12px}.chat-room .comment-box{left:12px;right:12px;bottom:15px}
-  .announcement-form{height:auto;min-height:420px;padding:13px}.announcement-form h2{font-size:19px}.announcement-form>div:first-child button{font-size:0;padding:0 12px}.announcement-form input{height:60px}.announcement-body{height:260px;padding:16px}.announcement-body>.file-action{left:16px}.announcement-body button:nth-of-type(2){right:16px}.notices{grid-template-columns:1fr;gap:12px}.notice:nth-child(n){grid-column:auto;margin:0}.notice{height:auto;min-height:165px;padding:16px}.notice p br{display:none}
-
-  /* Profile */
-  .profile-page{width:100%;padding:0 12px}.profile-summary{height:auto;padding:17px;display:block}.profile-identity{gap:15px}.profile-avatar{width:78px;height:78px;font-size:26px}.profile-identity h1{font-size:19px}.profile-progress{margin-top:22px}.profile-progress>div:first-child{font-size:11px}.profile-progress>div:first-child strong{font-size:12px}.profile-progress nav{display:grid;grid-template-columns:1fr 1fr}.rewards{grid-template-columns:1fr;margin-top:30px}.rewards h2,.education h2{font-size:21px}.tier-roadmap{height:450px;padding:26px 17px}.tier-step{height:84px;padding-left:34px}.tier-step:not(:last-child)>i:after{height:62px}.tier-step>b{font-size:17px}.tier-step>span{padding:6px 10px;font-size:10px}.reward-stats article{height:70px}.education>div{grid-template-columns:1fr}.education-card{height:420px}.video-screen{height:325px}
-
-  /* Login */
-  .login-page{min-height:100dvh;padding:15px;background-position:center}.login-card{width:100%;max-width:410px;padding:28px 22px}
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden
 }
 
-@media(min-width:768px) and (max-width:1050px){
-  .header-inner,.site-footer,.dashboard-page,.signals-page,.market-page,.community-page,.profile-page{max-width:none;margin-left:24px;margin-right:24px}
-  .header-inner nav button{padding-left:10px;padding-right:10px}
+@media(max-width:767px) {
+  body {
+    font-size: 14px
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-size: 16px
+  }
+
+  /* Shared shell */
+  .site-header {
+    height: 82px;
+    position: relative;
+    z-index: 50
+  }
+
+  .header-inner {
+    height: 82px;
+    margin: 0;
+    padding: 0 16px;
+    max-width: none
+  }
+
+  .logo-button .nh-logo {
+    width: 44px;
+    height: 52px;
+    transform: none
+  }
+
+  .header-tools {
+    height: 46px;
+    padding: 5px;
+    gap: 0
+  }
+
+  .header-tools .settings {
+    width: 38px;
+    height: 36px;
+    padding: 8px;
+    font-size: 0
+  }
+
+  .header-tools>button:not(.settings):not(.menu) {
+    width: 38px;
+    padding: 8px
+  }
+
+  .header-tools .menu {
+    display: flex;
+    width: 38px;
+    padding: 8px
+  }
+
+  .header-inner nav {
+    position: absolute;
+    display: none;
+    top: 70px;
+    left: 12px;
+    right: 12px;
+    height: auto;
+    padding: 8px;
+    border: 1px solid #2b3744;
+    border-radius: 14px;
+    background: #101823;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .6);
+    flex-direction: column
+  }
+
+  .header-inner nav.open {
+    display: flex
+  }
+
+  .header-inner nav button {
+    width: 100%;
+    min-height: 44px;
+    text-align: left
+  }
+
+  .site-footer {
+    margin: 42px 16px 20px;
+    max-width: none;
+    padding: 0;
+  }
+
+  .footer-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 18px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .footer-brand .nh-logo {
+    width: 56px;
+    height: 64px;
+    flex-shrink: 0;
+    transform: none;
+  }
+
+  .footer-brand p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .footer-links,
+  .footer-links:nth-of-type(2) {
+    grid-column: span 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .footer-links:nth-of-type(3) {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .footer-links h3 {
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+  }
+
+  .footer-bottom {
+    height: auto;
+    margin-top: 28px;
+    padding: 14px;
+    gap: 12px;
+    flex-direction: column;
+    font-size: 11px;
+  }
+
+  .footer-bottom div {
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Dashboard */
+  .dashboard-page {
+    width: 100%;
+    padding: 0 12px
+  }
+
+  .market-hero {
+    display: block
+  }
+
+  .market-card {
+    height: 330px;
+    padding: 18px 16px
+  }
+
+  .market-copy {
+    display: block
+  }
+
+  .current-price {
+    font-size: 36px;
+    letter-spacing: .02em
+  }
+
+  .current-price b {
+    font-size: 11px;
+    padding: 4px 10px
+  }
+
+  .market-copy small {
+    font-size: 9px
+  }
+
+  .ohlc {
+    display: none
+  }
+
+  .price-graph {
+    margin-top: 12px;
+    min-height: 185px
+  }
+
+  .stats-column {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin-top: 9px
+  }
+
+  .dash-stat {
+    height: 88px
+  }
+
+  .dash-stat strong {
+    font-size: 18px
+  }
+
+  .dash-stat span {
+    font-size: 8px;
+    text-align: center
+  }
+
+  .dash-stat svg {
+    width: 21px
+  }
+
+  .calendar-section,
+  .latest-section,
+  .news-sentiment {
+    margin-top: 42px
+  }
+
+  .dash-section-title {
+    align-items: center
+  }
+
+  .dash-section-title h2 {
+    font-size: 19px;
+    gap: 7px
+  }
+
+  .dash-section-title h2 svg {
+    width: 21px
+  }
+
+  .dash-section-title p {
+    font-size: 11px;
+    margin-left: 28px
+  }
+
+  .dash-section-title button {
+    height: 34px;
+    padding: 0 10px;
+    font-size: 11px
+  }
+
+  .calendar-row {
+    height: 59px;
+    padding: 0 9px;
+    gap: 7px;
+    font-size: 10px
+  }
+
+  .calendar-row>i {
+    height: 27px
+  }
+
+  .event-time {
+    width: 62px;
+    height: 31px
+  }
+
+  .calendar-row>b {
+    padding: 4px 6px
+  }
+
+  .impact-bars u {
+    width: 4px;
+    height: 18px
+  }
+
+  .latest-card {
+    height: auto;
+    padding: 13px
+  }
+
+  .latest-meta {
+    height: 45px;
+    padding: 0 8px;
+    gap: 6px
+  }
+
+  .latest-meta>em {
+    display: none
+  }
+
+  .latest-meta>strong {
+    font-size: 11px
+  }
+
+  .latest-meta>span {
+    font-size: 9px
+  }
+
+  .latest-meta>b {
+    width: 52px;
+    font-size: 9px
+  }
+
+  .latest-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px
+  }
+
+  .dash-signal-metric {
+    height: 68px;
+    padding: 10px
+  }
+
+  .dash-signal-metric strong {
+    font-size: 15px
+  }
+
+  .news-sentiment {
+    display: block
+  }
+
+  .sentiment {
+    border: 0;
+    padding: 0;
+    margin-top: 30px
+  }
+
+  .announcement-card {
+    height: auto;
+    min-height: 145px
+  }
+
+  .announcement-card h3 {
+    font-size: 16px
+  }
+
+  .announcement-card p br {
+    display: none
+  }
+
+  .sentiment-card {
+    height: auto
+  }
+
+  .sentiment-item {
+    display: block;
+    width: 100%
+  }
+
+  /* Signals */
+  .signals-page {
+    width: 100%;
+    padding: 0 12px
+  }
+
+  .signals-heading {
+    height: auto;
+    min-height: 78px;
+    padding: 13px
+  }
+
+  .signals-heading h1 {
+    font-size: 22px
+  }
+
+  .heading-actions {
+    gap: 7px
+  }
+
+  .heading-actions button {
+    height: 38px;
+    padding: 0 10px;
+    font-size: 10px
+  }
+
+  .heading-actions .admin-button {
+    display: flex;
+    min-width: 0;
+    font-size: 0
+  }
+
+  .heading-actions .admin-button svg {
+    margin: 0
+  }
+
+  .new-signal-panel {
+    padding: 14px
+  }
+
+  .signal-form-grid {
+    display: block
+  }
+
+  .form-divider {
+    display: none
+  }
+
+  .signal-type {
+    margin-bottom: 16px
+  }
+
+  .field-column {
+    margin-bottom: 14px
+  }
+
+  .publish-column {
+    display: flex !important
+  }
+
+  .upload-row {
+    align-items: stretch
+  }
+
+  .upload-button {
+    height: 75px;
+    width: 80px
+  }
+
+  .publish-button {
+    height: 75px
+  }
+
+  .mode-bar {
+    height: auto;
+    align-items: stretch
+  }
+
+  .mode-buttons {
+    width: 100%;
+    gap: 7px
+  }
+
+  .mode-buttons button {
+    min-width: 0;
+    height: 43px;
+    font-size: 10px;
+    padding: 0 8px
+  }
+
+  .mode-buttons button svg {
+    width: 20px
+  }
+
+  .signal-count {
+    align-self: flex-end;
+    padding: 6px 14px;
+    font-size: 11px
+  }
+
+  .filters-section {
+    margin-top: 28px
+  }
+
+  .filters-section h2 {
+    font-size: 20px
+  }
+
+  .filters-bar {
+    height: auto;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    padding: 9px
+  }
+
+  .search-field {
+    grid-column: 1/-1
+  }
+
+  .filters-bar button {
+    display: flex !important;
+    padding: 0 10px;
+    font-size: 10px
+  }
+
+  .filters-bar button:nth-of-type(n+3) {
+    display: none !important
+  }
+
+  .signals-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    margin-top: 22px
+  }
+
+  .signal-card {
+    height: auto;
+    min-height: 235px;
+    padding: 13px 11px
+  }
+
+  .signal-meta {
+    font-size: 8px
+  }
+
+  .published {
+    font-size: 9px
+  }
+
+  .card-data {
+    grid-template-columns: 1.8fr 1fr
+  }
+
+  .signal-metric {
+    padding: 8px
+  }
+
+  .signal-note {
+    font-size: 10px
+  }
+
+  /* Market */
+  .market-page {
+    width: 100%;
+    padding: 0 12px
+  }
+
+  .market-header {
+    height: auto
+  }
+
+  .market-header>div {
+    height: 82px;
+    padding: 15px
+  }
+
+  .market-header h1 {
+    font-size: 23px
+  }
+
+  .market-header nav {
+    height: auto;
+    padding: 9px;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    overflow: visible
+  }
+
+  .market-header nav button {
+    height: 43px;
+    padding: 0 12px;
+    font-size: 11px
+  }
+
+  .chart-view {
+    height: 510px;
+    margin-top: 22px;
+    padding: 11px
+  }
+
+  .symbol-tabs {
+    overflow-x: auto;
+    padding-bottom: 4px
+  }
+
+  .symbol-tabs button {
+    min-width: 105px;
+    height: 42px
+  }
+
+  .chart-placeholder {
+    height: 410px;
+    margin-top: 14px
+  }
+
+  .market-demo-chart {
+    inset: 50px 10px 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 60px)
+  }
+
+  .outlook-view {
+    grid-template-columns: 1fr;
+    margin-top: 32px
+  }
+
+  .outlook-view h2,
+  .research-view h2 {
+    font-size: 21px
+  }
+
+  .outlook-card {
+    height: auto;
+    padding: 20px 16px
+  }
+
+  .outlook-card p br {
+    display: none
+  }
+
+  .levels {
+    height: 180px;
+    padding: 20px;
+    gap: 18px
+  }
+
+  .sentiment-row {
+    grid-template-columns: 65px 1fr 95px;
+    padding: 0 9px;
+    font-size: 11px
+  }
+
+  .research-view {
+    margin-top: 25px
+  }
+
+  .session-cards {
+    grid-template-columns: 1fr
+  }
+
+  .session-cards article {
+    height: auto;
+    min-height: 150px;
+    padding: 15px
+  }
+
+  .session-cards article>div>span {
+    font-size: 10px
+  }
+
+  .session-cards p br {
+    display: none
+  }
+
+  .driver-tags {
+    overflow-x: auto
+  }
+
+  .driver-tags button {
+    min-width: 155px
+  }
+
+  .session-overview {
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px
+  }
+
+  .session-overview>u {
+    display: none
+  }
+
+  .session-overview svg {
+    display: block;
+    height: 60px
+  }
+
+  .calendar-view {
+    margin-top: 24px
+  }
+
+  .calendar-filters {
+    height: auto
+  }
+
+  .calendar-filters>div {
+    height: auto;
+    min-height: 62px;
+    overflow-x: auto;
+    padding: 8px
+  }
+
+  .calendar-filters button {
+    min-width: 105px;
+    height: 42px
+  }
+
+  .calendar-filters>div:last-child span,
+  .calendar-filters>div:last-child button {
+    display: none
+  }
+
+  .calendar-filters label {
+    min-width: 100%;
+    width: 100%
+  }
+
+  .event-list {
+    margin-top: 20px
+  }
+
+  .market-event {
+    height: 67px;
+    padding: 0 8px;
+    gap: 7px
+  }
+
+  .cal-time {
+    width: 64px;
+    height: 36px
+  }
+
+  .us-flag {
+    width: 36px;
+    height: 25px
+  }
+
+  .market-event>i {
+    height: 30px
+  }
+
+  .market-event>strong {
+    font-size: 9px
+  }
+
+  .market-event>span:not(.cal-time),
+  .market-event>i:nth-of-type(n+3) {
+    display: none
+  }
+
+  .event-bars u {
+    width: 4px;
+    height: 22px
+  }
+
+  /* Community */
+  .community-page {
+    width: 100%;
+    padding: 0 12px
+  }
+
+  .community-header {
+    height: auto;
+    padding: 13px;
+    gap: 12px
+  }
+
+  .community-header h1 {
+    font-size: 23px
+  }
+
+  .community-header nav {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 7px
+  }
+
+  .community-header nav button {
+    height: 43px;
+    font-size: 11px
+  }
+
+  .forum-view {
+    grid-template-columns: 1fr;
+    margin-top: 30px
+  }
+
+  .forum-view aside {
+    display: none
+  }
+
+  .forum-view h2 {
+    font-size: 20px
+  }
+
+  .forum-composer {
+    height: 210px;
+    padding: 16px
+  }
+
+  .forum-composer textarea {
+    height: 125px
+  }
+
+  .forum-composer button,
+  .file-action {
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 11px
+  }
+
+  .member-card {
+    height: auto;
+    min-height: 155px;
+    padding: 16px;
+    margin-top: 13px
+  }
+
+  .member-card h3,
+  .live-post h3 {
+    font-size: 17px
+  }
+
+  .member-card p br,
+  .live-post p br {
+    display: none
+  }
+
+  .live-view {
+    margin-top: 24px
+  }
+
+  .live-manage {
+    height: auto;
+    padding: 13px;
+    display: block
+  }
+
+  .live-manage h2 {
+    font-size: 20px;
+    margin-bottom: 10px
+  }
+
+  .youtube-admin {
+    display: grid;
+    grid-template-columns: 1fr
+  }
+
+  .youtube-admin input {
+    width: 100%
+  }
+
+  .youtube-admin button {
+    width: 100%;
+    height: 42px;
+    flex-basis: auto !important
+  }
+
+  .live-screen {
+    height: 260px
+  }
+
+  .live-post {
+    width: 94%;
+    height: auto;
+    min-height: 110px;
+    padding: 14px
+  }
+
+  .live-post.right {
+    margin-left: 6%
+  }
+
+  .live-post time {
+    font-size: 10px
+  }
+
+  .fake-scroll {
+    display: none
+  }
+
+  .comment-box {
+    height: 51px
+  }
+
+  .chat-view {
+    height: 720px;
+    margin-top: 25px;
+    grid-template-columns: 1fr
+  }
+
+  .chat-view>aside {
+    display: none
+  }
+
+  .chat-room {
+    padding: 80px 12px 15px
+  }
+
+  .bubble {
+    width: 92%;
+    padding: 15px;
+    font-size: 12px
+  }
+
+  .chat-room .comment-box {
+    left: 12px;
+    right: 12px;
+    bottom: 15px
+  }
+
+  .announcement-form {
+    height: auto;
+    min-height: 420px;
+    padding: 13px
+  }
+
+  .announcement-form h2 {
+    font-size: 19px
+  }
+
+  .announcement-form>div:first-child button {
+    font-size: 0;
+    padding: 0 12px
+  }
+
+  .announcement-form input {
+    height: 60px
+  }
+
+  .announcement-body {
+    height: 260px;
+    padding: 16px
+  }
+
+  .announcement-body>.file-action {
+    left: 16px
+  }
+
+  .announcement-body button:nth-of-type(2) {
+    right: 16px
+  }
+
+  .notices {
+    grid-template-columns: 1fr;
+    gap: 12px
+  }
+
+  .notice:nth-child(n) {
+    grid-column: auto;
+    margin: 0
+  }
+
+  .notice {
+    height: auto;
+    min-height: 165px;
+    padding: 16px
+  }
+
+  .notice p br {
+    display: none
+  }
+
+  /* Profile */
+  .profile-page {
+    width: 100%;
+    padding: 0 12px
+  }
+
+  .profile-summary {
+    height: auto;
+    padding: 17px;
+    display: block
+  }
+
+  .profile-identity {
+    gap: 15px
+  }
+
+  .profile-avatar {
+    width: 78px;
+    height: 78px;
+    font-size: 26px
+  }
+
+  .profile-identity h1 {
+    font-size: 19px
+  }
+
+  .profile-progress {
+    margin-top: 22px
+  }
+
+  .profile-progress>div:first-child {
+    font-size: 11px
+  }
+
+  .profile-progress>div:first-child strong {
+    font-size: 12px
+  }
+
+  .profile-progress nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr
+  }
+
+  .rewards {
+    grid-template-columns: 1fr;
+    margin-top: 30px
+  }
+
+  .rewards h2,
+  .education h2 {
+    font-size: 21px
+  }
+
+  .tier-roadmap {
+    height: 450px;
+    padding: 26px 17px
+  }
+
+  .tier-step {
+    height: 84px;
+    padding-left: 34px
+  }
+
+  .tier-step:not(:last-child)>i:after {
+    height: 62px
+  }
+
+  .tier-step>b {
+    font-size: 17px
+  }
+
+  .tier-step>span {
+    padding: 6px 10px;
+    font-size: 10px
+  }
+
+  .reward-stats article {
+    height: 70px
+  }
+
+  .education>div {
+    grid-template-columns: 1fr
+  }
+
+  .education-card {
+    height: 420px
+  }
+
+  .video-screen {
+    height: 325px
+  }
+
+  /* Login */
+  .login-page {
+    min-height: 100dvh;
+    padding: 15px;
+    background-position: center
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 410px;
+    padding: 28px 22px
+  }
+}
+
+@media(min-width:768px) and (max-width:1050px) {
+
+  .header-inner,
+  .site-footer,
+  .dashboard-page,
+  .signals-page,
+  .market-page,
+  .community-page,
+  .profile-page {
+    max-width: none;
+    margin-left: 24px;
+    margin-right: 24px
+  }
+
+  .header-inner nav button {
+    padding-left: 10px;
+    padding-right: 10px
+  }
 }

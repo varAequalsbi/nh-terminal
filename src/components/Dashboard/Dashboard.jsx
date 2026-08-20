@@ -2,6 +2,8 @@ import React,{useEffect,useMemo,useState}from 'react';
 import { ArrowRight, BarChart2, Bell, Calendar, Clock, Crosshair, DollarSign } from 'lucide-react';
 import './dashboard.css';
 
+import { useNavigate } from 'react-router-dom';
+
 function PriceGraph() {
   const [points,setPoints]=useState(()=>Array.from({length:24},(_,i)=>({x:i*31,y:40+Math.random()*150})));
   useEffect(()=>{const timer=setInterval(()=>setPoints(old=>[...old.slice(1).map((p,i)=>({...p,x:i*31})),{x:713,y:35+Math.random()*170}]),1800);return()=>clearInterval(timer)},[]);
@@ -17,8 +19,13 @@ function StatCard({ icon: Icon, value, label }) {
   return <div className="dash-stat"><Icon/><strong>{value}</strong><span>{label}</span></div>;
 }
 
-function SectionTitle({ icon: Icon, title, subtitle, action = true }) {
-  return <div className="dash-section-title"><div><h2><Icon/>{title}</h2>{subtitle&&<p>{subtitle}</p>}</div>{action&&<button>View All <ArrowRight/></button>}</div>;
+function SectionTitle({ icon: Icon, title, subtitle, action = true,href }) {
+  const navigate=useNavigate();
+  return <div className="dash-section-title"><div><h2><Icon/>{title}</h2>{subtitle&&<p>{subtitle}</p>}</div>{action && (
+  <button onClick={() => navigate(href)}>
+    View All <ArrowRight />
+  </button>
+)}</div>;
 }
 
 const events=[['15:30','HIGH','US','Non-Farm Payrolls','high'],['15:30','MEDIUM','US','Unemployment Rate','medium'],['15:30','LOW','US','Unemployment Rate','low']];
@@ -36,9 +43,11 @@ export default function Dashboard(){return <div className="dashboard-page">
     <div className="stats-column"><StatCard icon={Crosshair} value="5+" label="ACTIVE SIGNAL"/><StatCard icon={BarChart2} value="100%" label="WIN RATE"/><StatCard icon={DollarSign} value="+9.3K" label="NET PIPS"/></div>
   </section>
 
-  <section className="calendar-section"><SectionTitle icon={Calendar} title="ECONOMIC CALENDAR" subtitle="High Impact Events"/><div className="calendar-list">{events.map((x,i)=><CalendarRow item={x} key={i}/>)}</div></section>
+  <section className="calendar-section"><SectionTitle icon={Calendar} title="ECONOMIC CALENDAR" href="/market?tab=calendar" subtitle="High Impact Events"/><div className="calendar-list">{events.map((x,i)=><CalendarRow item={x} key={i}/>)}</div></section>
 
-  <section className="latest-section"><SectionTitle icon={Crosshair} title="LATEST SIGNAL"/><div className="latest-card"><div className="latest-meta"><b>SELL</b><i/><strong>XAUUSD</strong><i/><em>London Session - 09:45 WIB</em><span>● LIVE</span></div><div className="latest-metrics"><SignalMetric title="ENTRY" value="3428.50" chart/><SignalMetric title="SL" value="3428.50" tone="red"/><SignalMetric title="TP 1" value="3428.50" tone="green"/><SignalMetric title="TP 2" value="3428.50" tone="green"/></div></div></section>
+  <section className="latest-section">
+    <SectionTitle icon={Crosshair} title="LATEST SIGNAL" href="/signal"/>
+    <div className="latest-card"><div className="latest-meta"><b>SELL</b><i/><strong>XAUUSD</strong><i/><em>London Session - 09:45 WIB</em><span>● LIVE</span></div><div className="latest-metrics"><SignalMetric title="ENTRY" value="3428.50" chart/><SignalMetric title="SL" value="3428.50" tone="red"/><SignalMetric title="TP 1" value="3428.50" tone="green"/><SignalMetric title="TP 2" value="3428.50" tone="green"/></div></div></section>
 
-  <section className="news-sentiment"><div className="announcements"><SectionTitle icon={Bell} title="ANNOUNCEMENT"/><Announcement/><Announcement/></div><div className="sentiment"><SectionTitle icon={ArrowRight} title="MARKET SENTIMENT" action={false}/><div className="sentiment-card"><SentimentChart type="Bullish" percent="68%" positive/><SentimentChart type="Bearish" percent="30%"/><small><Clock/> Last Update - 5 Min Ago</small></div></div></section>
+  <section className="news-sentiment"><div className="announcements"><SectionTitle icon={Bell} title="ANNOUNCEMENT" href="/community?tab=info"/><Announcement/><Announcement/></div><div className="sentiment"><SectionTitle icon={ArrowRight} title="MARKET SENTIMENT" action={false}/><div className="sentiment-card"><SentimentChart type="Bullish" percent="68%" positive/><SentimentChart type="Bearish" percent="30%"/><small><Clock/> Last Update - 5 Min Ago</small></div></div></section>
  </div>}

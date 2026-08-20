@@ -88,7 +88,7 @@ export default function Announcement() {
       <Card.Header 
         title="📢 ANNOUNCEMENT" 
         action={
-          <a href="/community" className="text-color-gold text-xs font-semibold hover:text-opacity-80">
+          <a href="/community?tab=info" className="text-color-gold text-xs font-semibold hover:text-opacity-80">
             View All →
           </a>
         }
