@@ -8,7 +8,10 @@
       "Bash(timeout 8 winpty -c \"cat '/c/Users/ASUS VivoBook/AppData/Local/Temp/claude/D--Kode-js-Client-nh-terminal-files-3--nh-terminal/d19aa6ef-a8e0-4b3f-9d9f-723ae9562d68/tasks/bdl0cwxuf.output\")",
       "Bash(node -e \"import\\('lucide-react'\\).then\\(m => console.log\\('BarChart3:', typeof m.BarChart3\\)\\)\")",
       "Bash(git checkout *)",
-      "Bash(dir *)"
+      "Bash(dir *)",
+      "Bash(grep -o \"manualChunks.\\\\{0,120\\\\}\" node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js)",
+      "Bash(node -e ' *)",
+      "Bash(npm view *)"
     ]
   }
 }
