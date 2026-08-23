@@ -757,6 +757,28 @@
     gap: 7px
 }
 
+@media (max-width: 767px) {
+    .forum-composer>div {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%
+    }
+
+    .forum-composer button,
+    .forum-composer button:last-child {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0;
+        padding-inline: 8px;
+        justify-content: center
+    }
+
+    .forum-composer button:last-child {
+        grid-column: 1/-1
+    }
+}
+
 .file-action {
     height: 38px;
     min-width: 140px;

@@ -62,48 +62,27 @@ body,
     padding: 8px
   }
 
-  .header-inner nav {
-    position: absolute;
-    display: none;
-    top: 70px;
-    left: 12px;
-    right: 12px;
-    height: auto;
-    padding: 8px;
-    border: 1px solid #2b3744;
-    border-radius: 14px;
-    background: #101823;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, .6);
-    flex-direction: column
-  }
-
-  .header-inner nav.open {
-    display: flex
-  }
-
-  .header-inner nav button {
-    width: 100%;
-    min-height: 44px;
-    text-align: left
-  }
-
   .site-footer {
-    margin: 42px 16px 20px;
+    margin: 42px 16px 24px;
     max-width: none;
     padding: 0;
   }
 
   .footer-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .footer-brand {
-    grid-column: 1 / -1;
     display: flex;
     align-items: center;
     gap: 16px;
+    margin-bottom: 12px;
+    padding: 18px;
+    border: 1px solid #202b38;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0c141f, #101824);
   }
 
   .footer-brand .nh-logo {
@@ -119,42 +98,80 @@ body,
   }
 
   .footer-links,
-  .footer-links:nth-of-type(2) {
-    grid-column: span 1;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-  }
-
+  .footer-links:nth-of-type(2),
   .footer-links:nth-of-type(3) {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
+    width: 100%;
+    border-bottom: 1px solid #202b38;
   }
 
-  .footer-links h3 {
-    font-size: 15px;
-    margin-bottom: 2px;
+  .footer-links summary {
+    min-height: 50px;
+    margin: 0;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    letter-spacing: .06em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .footer-links summary svg {
+    display: block;
+    color: #b38d0b;
+    transition: transform .2s ease;
+  }
+
+  .footer-links[open] summary svg {
+    transform: rotate(180deg);
+  }
+
+  .footer-link-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+    padding: 0 0 14px;
+  }
+
+  details.footer-links:not([open]) > .footer-link-list {
+    display: none;
   }
 
   .footer-links a {
-    font-size: 12px;
+    min-height: 40px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
   }
 
   .footer-bottom {
     height: auto;
-    margin-top: 28px;
-    padding: 14px;
-    gap: 12px;
+    margin-top: 22px;
+    padding: 16px;
+    gap: 14px;
     flex-direction: column;
-    font-size: 11px;
+    border-radius: 18px;
+    font-size: 12px;
+    text-align: center;
   }
 
   .footer-bottom div {
-    gap: 16px;
-    flex-wrap: wrap;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .footer-bottom a {
+    min-height: 40px;
+    padding: 6px 3px;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    font-size: 11px;
+    line-height: 1.2;
   }
 
   /* Dashboard */
@@ -1049,5 +1066,261 @@ body,
   .header-inner nav button {
     padding-left: 10px;
     padding-right: 10px
+  }
+}
+
+/* Mobile content-safety pass. Keep copy, controls and decorative artwork in flow. */
+@media (max-width: 767px) {
+  main,
+  main section,
+  main article,
+  main div,
+  main header,
+  main nav {
+    min-width: 0;
+  }
+
+  main h1,
+  main h2,
+  main h3,
+  main p,
+  main span,
+  main strong,
+  main em,
+  main label,
+  main button {
+    overflow-wrap: anywhere;
+  }
+
+  main img,
+  main svg,
+  main video,
+  main iframe {
+    max-width: 100%;
+  }
+
+  /* Dashboard headings and cards */
+  .dash-section-title {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dash-section-title > div {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .dash-section-title h2 {
+    align-items: flex-start;
+    line-height: 1.2;
+  }
+
+  .dash-section-title h2 svg {
+    flex: 0 0 21px;
+  }
+
+  .dash-section-title button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .current-price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px 8px;
+    line-height: 1.08;
+  }
+
+  .current-price b {
+    margin-left: 0;
+  }
+
+  .calendar-row > span:last-of-type {
+    min-width: 0;
+    line-height: 1.15;
+  }
+
+  .impact-bars {
+    flex: 0 0 auto;
+  }
+
+  .latest-meta > strong {
+    white-space: nowrap;
+  }
+
+  .dash-signal-metric {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .dash-signal-metric em,
+  .dash-signal-metric strong {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dash-signal-metric strong {
+    max-width: calc(100% - 18px);
+    letter-spacing: .06em;
+    white-space: nowrap;
+  }
+
+  .dash-signal-metric span {
+    right: 7px;
+    top: 18px;
+    z-index: 0;
+    font-size: 34px;
+    opacity: .35;
+    pointer-events: none;
+  }
+
+  .announcement-card > div {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .announcement-card h3 {
+    min-width: 0;
+  }
+
+  .announcement-card > div span {
+    flex: 0 0 auto;
+    max-width: 42%;
+    text-align: center;
+  }
+
+  .announcement-card p,
+  .notice p,
+  .member-card p,
+  .live-post p,
+  .outlook-card p,
+  .session-cards p {
+    line-height: 1.45;
+  }
+
+  /* Forms and toolbars must wrap instead of colliding. */
+  .signals-heading,
+  .mode-bar,
+  .community-header,
+  .live-manage,
+  .announcement-form > div:first-child {
+    flex-wrap: wrap;
+  }
+
+  .heading-actions,
+  .mode-buttons,
+  .community-header nav,
+  .youtube-admin,
+  .announcement-form > div:first-child {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .field-column input,
+  .field-column select,
+  .field-column textarea,
+  .youtube-admin input,
+  .comment-box input {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .forum-composer > div {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .forum-composer button,
+  .forum-composer button:last-child {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    padding-inline: 8px !important;
+    justify-content: center !important;
+  }
+
+  .forum-composer button:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Profile artwork and long labels */
+  .profile-identity > div:last-child,
+  .tier-step,
+  .education-card {
+    min-width: 0;
+  }
+
+  .tier-step {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 5px 10px;
+  }
+
+  .tier-step > span {
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    min-height: 30px;
+    padding: 5px 10px;
+    white-space: normal !important;
+    line-height: 1.25;
+  }
+}
+
+@media (max-width: 380px) {
+  .dash-section-title h2 {
+    font-size: 17px;
+  }
+
+  .dash-section-title p {
+    margin-left: 28px;
+  }
+
+  .dash-section-title button {
+    padding: 0 8px;
+    font-size: 10px;
+  }
+
+  .calendar-row {
+    padding-inline: 7px;
+  }
+
+  .event-time {
+    width: 55px;
+  }
+
+  .calendar-row > i {
+    display: none;
+  }
+
+  .calendar-row > b {
+    font-size: 9px;
+  }
+
+  .dash-signal-metric {
+    padding-inline: 8px;
+  }
+
+  .dash-signal-metric strong {
+    max-width: 100%;
+    font-size: 12px !important;
+    letter-spacing: 0 !important;
+  }
+
+  .tier-step > span {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .tier-step > span u {
+    margin-inline: 6px;
+  }
+
+  .footer-link-list {
+    grid-template-columns: 1fr;
   }
 }

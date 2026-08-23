@@ -565,6 +565,33 @@
         margin-bottom: 30px !important
     }
 
+    .filters-section .filters-bar {
+        height: auto !important;
+        min-height: 97px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-auto-rows: 36px;
+        align-items: stretch;
+        gap: 7px;
+        padding: 9px;
+        overflow: visible
+    }
+
+    .filters-section .search-field {
+        min-width: 0;
+        grid-column: 1 / -1
+    }
+
+    .filters-section .filters-bar button {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap
+    }
+
+    .filters-section .filters-bar button svg {
+        flex: 0 0 auto;
+        margin-left: 6px
+    }
+
     .signals-grid {
         margin-top: 0 !important
     }

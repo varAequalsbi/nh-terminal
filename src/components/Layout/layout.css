@@ -74,6 +74,10 @@
     color: #b38d0b
 }
 
+.header-inner nav .nav-icon {
+    display: none
+}
+
 .header-tools {
     height: 56px;
     background: #0c111b;
@@ -139,9 +143,6 @@
 
 .footer-links {
     grid-column: span 2;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
 
 .footer-links:nth-of-type(2) {
@@ -152,9 +153,28 @@
     grid-column: span 3;
 }
 
-.footer-links h3 {
+.footer-links summary {
+    display: block;
+    list-style: none;
     font-size: 18px;
-    margin-bottom: 3px
+    font-weight: 700;
+    margin-bottom: 13px;
+    cursor: default
+}
+
+.footer-links summary::-webkit-details-marker,
+.footer-links summary svg {
+    display: none
+}
+
+.footer-link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+details.footer-links:not([open]) > .footer-link-list {
+    display: flex
 }
 
 .footer-links a,
@@ -291,4 +311,83 @@
     height: 88px;
     object-fit: contain;
     transform: none
+}
+
+/* Persistent app-style navigation on phones and small tablets. */
+@media (max-width: 767px) {
+    .site-header .header-inner nav,
+    .site-header .header-inner nav.open {
+        position: fixed !important;
+        inset: auto 10px 10px !important;
+        z-index: 1000 !important;
+        width: auto !important;
+        height: 70px !important;
+        padding: 6px !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+        border: 1px solid #33404f !important;
+        border-radius: 20px !important;
+        background: rgba(12, 18, 27, .98) !important;
+        box-shadow: 0 12px 38px rgba(0, 0, 0, .72) !important;
+        backdrop-filter: blur(16px) !important;
+        flex-direction: initial !important;
+    }
+
+    .site-header .header-inner nav button {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 56px !important;
+        padding: 5px 2px 4px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        border: 0 !important;
+        border-radius: 13px !important;
+        font-size: 10px !important;
+        line-height: 1.15 !important;
+        letter-spacing: .02em !important;
+        text-align: center !important;
+        white-space: normal !important;
+    }
+
+    .site-header .header-inner nav button.selected {
+        color: #c29a24 !important;
+        background: #1b2634 !important;
+        box-shadow: inset 0 0 0 1px rgba(194, 154, 36, .24) !important;
+    }
+
+    .site-header .header-inner nav .nav-icon {
+        display: block !important;
+        width: 21px !important;
+        height: 21px !important;
+        flex: 0 0 auto !important;
+    }
+
+    .header-tools .menu {
+        display: none !important;
+    }
+
+    .site-footer {
+        margin-bottom: 108px !important;
+    }
+
+    main {
+        padding-bottom: 96px;
+    }
+}
+
+@supports (padding: max(0px)) {
+    @media (max-width: 767px) {
+        .site-header .header-inner nav,
+        .site-header .header-inner nav.open {
+            bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        }
+
+        main {
+            padding-bottom: calc(96px + env(safe-area-inset-bottom));
+        }
+    }
 }

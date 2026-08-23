@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 import { NHLogo } from './Header';
 import './layout.css';
 
@@ -23,14 +24,19 @@ export default function Footer() {
           </p>
         </div>
         {groups.map(([title, ...links]) => (
-          <div className="footer-links" key={title}>
-            <h3>{title}</h3>
-            {links.map((x) => (
-              <a href="#" key={x}>
-                {x}
-              </a>
-            ))}
-          </div>
+          <details className="footer-links" key={title}>
+            <summary>
+              <span>{title}</span>
+              <ChevronDown size={18} aria-hidden="true" />
+            </summary>
+            <div className="footer-link-list">
+              {links.map((x) => (
+                <a href="#" key={x}>
+                  {x}
+                </a>
+              ))}
+            </div>
+          </details>
         ))}
       </div>
       <div className="footer-bottom">
@@ -44,4 +50,3 @@ export default function Footer() {
     </footer>
   );
 }
-
