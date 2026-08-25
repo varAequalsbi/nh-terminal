@@ -129,7 +129,17 @@ export default function SignalsPage() {
         <div className="heading-actions">
           <button onClick={() => setHistory(!history)}>{history ? 'View Active' : 'View History'}</button>
           <button className="admin-button" onClick={() => setShowAdminForm(!showAdminForm)}>
-            {showAdminForm ? <><X size={17} /> Tutup</> : <><PlusCircle size={17} /> Tambah Signal (Admin)</>}
+            {showAdminForm ? (
+              <>
+                <X size={17} />
+                <span>Tutup</span>
+              </>
+            ) : (
+              <>
+                <PlusCircle size={17} />
+                <span>Tambah Signal (Admin)</span>
+              </>
+            )}
           </button>
         </div>
       </section>
