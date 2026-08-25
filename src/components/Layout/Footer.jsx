@@ -1,12 +1,28 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { NHLogo } from './Header';
 import './layout.css';
 
 const groups = [
-  ['PRODUCT', 'Dashboard', 'Signals', 'Market', 'Economic Calendar'],
-  ['COMMUNITY', 'Community', 'Live Trade', 'Forum', 'Education'],
-  ['SUPPORT', 'Help Center', 'FAQ', 'Contact', 'Privacy'],
+  ['PRODUCT', [
+    ['Dashboard', '/dashboard'],
+    ['Signals', '/signal'],
+    ['Market', '/market'],
+    ['Economic Calendar', '/market?tab=calendar'],
+  ]],
+  ['COMMUNITY', [
+    ['Community', '/community'],
+    ['Live Trade', '/community?tab=live'],
+    ['Forum', '/community?tab=forum'],
+    ['Education', '/profile#education'],
+  ]],
+  ['SUPPORT', [
+    ['Help Center', '/help-center'],
+    ['FAQ', '/faq'],
+    ['Contact', '/contact'],
+    ['Privacy', '/privacy'],
+  ]],
 ];
 
 export default function Footer() {
@@ -23,17 +39,17 @@ export default function Footer() {
             Make Better Decisions.
           </p>
         </div>
-        {groups.map(([title, ...links]) => (
+        {groups.map(([title, links]) => (
           <details className="footer-links" key={title}>
             <summary>
               <span>{title}</span>
               <ChevronDown size={18} aria-hidden="true" />
             </summary>
             <div className="footer-link-list">
-              {links.map((x) => (
-                <a href="#" key={x}>
-                  {x}
-                </a>
+              {links.map(([label, to]) => (
+                <Link to={to} key={label}>
+                  {label}
+                </Link>
               ))}
             </div>
           </details>
@@ -42,9 +58,9 @@ export default function Footer() {
       <div className="footer-bottom">
         <span>© 2026 NH Terminal</span>
         <div>
-          <a href="#">Terms</a>
-          <a href="#">Privacy</a>
-          <a href="#">Risk Disclosure</a>
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/risk-disclosure">Risk Disclosure</Link>
         </div>
       </div>
     </footer>

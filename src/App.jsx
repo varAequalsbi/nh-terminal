@@ -12,6 +12,7 @@ const SignalsPage = lazy(() => import('./components/Signals/SignalsPage'));
 const MarketOverview = lazy(() => import('./components/Market/MarketOverview'));
 const CommunityPage = lazy(() => import('./components/Community/CommunityPage'));
 const ProfilePage = lazy(() => import('./components/Profile/ProfilePage'));
+const InfoPage = lazy(() => import('./components/Info/InfoPage'));
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -51,6 +52,12 @@ function AppContent() {
                 <Route path="/market" element={<MarketOverview />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/help-center" element={<InfoPage page="help" />} />
+                <Route path="/faq" element={<InfoPage page="faq" />} />
+                <Route path="/contact" element={<InfoPage page="contact" />} />
+                <Route path="/privacy" element={<InfoPage page="privacy" />} />
+                <Route path="/terms" element={<InfoPage page="terms" />} />
+                <Route path="/risk-disclosure" element={<InfoPage page="risk" />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </>
             ) : (

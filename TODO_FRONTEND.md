@@ -20,12 +20,12 @@ production-ready application.
 
 ## 2. Global navigation and layout
 
-- [ ] Make the logo return to the dashboard and verify keyboard activation.
+- [x] Make the logo return to the dashboard and verify keyboard activation.
 - [ ] Implement the Settings destination or settings modal.
 - [ ] Implement logout confirmation, API logout, session clearing, and redirect.
 - [ ] Finish the mobile navigation drawer, focus trap, body-scroll lock, and outside-click/Escape behavior.
-- [ ] Connect footer links to real internal pages or approved external destinations.
-- [ ] Add Terms, Privacy Policy, Risk Disclosure, Help Center, FAQ, and Contact pages.
+- [x] Connect footer links to real internal pages or approved external destinations.
+- [x] Add Terms, Privacy Policy, Risk Disclosure, Help Center, FAQ, and Contact pages.
 - [ ] Verify header/footer alignment at 320, 360, 390, 768, 1024, 1280, 1440, and 1920 px widths.
 - [ ] Ensure long translated labels and user-generated text cannot break navigation or cards.
 - [ ] Self-host the US flag instead of relying on the current external CDN URL.
@@ -49,11 +49,11 @@ production-ready application.
 - [ ] Add chart loading, stale-data, disconnected, market-closed, and reconnecting indicators.
 - [ ] Show accurate price, change, high, low, open, and last-update timestamp formatting.
 - [ ] Connect Active Signals, Win Rate, and Net Pips statistics to the current user or selected period.
-- [ ] Make Economic Calendar “View All” navigate to Market → Kalender.
+- [x] Make Economic Calendar “View All” navigate to Market → Kalender.
 - [ ] Make calendar rows open event details.
 - [ ] Make Latest Signal “View All” navigate to Signals and open a selected signal detail view.
 - [ ] Add a signal detail modal/page with chart, status history, notes, and timestamps.
-- [ ] Make Announcement “View All” navigate to Community → Info.
+- [x] Make Announcement “View All” navigate to Community → Info.
 - [ ] Make Market Sentiment refresh from live data and expose its calculation timestamp/source.
 - [ ] Animate changing figures carefully without causing layout shifts.
 
