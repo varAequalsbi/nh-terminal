@@ -299,6 +299,12 @@ details.footer-links:not([open]) > .footer-link-list {
     }
 }
 
+.header-tools button{
+    gap: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .nh-logo {
     width: 58px;
     height: 58px;
@@ -374,9 +380,7 @@ details.footer-links:not([open]) > .footer-link-list {
         margin-bottom: 108px !important;
     }
 
-    main {
-        padding-bottom: 96px;
-    }
+    
 }
 
 @supports (padding: max(0px)) {
@@ -386,8 +390,5 @@ details.footer-links:not([open]) > .footer-link-list {
             bottom: max(10px, env(safe-area-inset-bottom)) !important;
         }
 
-        main {
-            padding-bottom: calc(96px + env(safe-area-inset-bottom));
-        }
     }
 }
