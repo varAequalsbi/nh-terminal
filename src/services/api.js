@@ -1,7 +1,9 @@
 // src/services/api.js
 import axios from 'axios';
+import { env } from '../config/env';
+import { clearSession } from '../auth/session';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = env.apiUrl || '/api';
 const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 30000;
 
 const api = axios.create({
@@ -30,8 +32,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expired or invalid
-      localStorage.removeItem('authToken');
-      window.location.href = '/login';
+      clearSession();
+      const intended = `${window.location.pathname}${window.location.search}`;
+      window.location.assign(`/login?from=${encodeURIComponent(intended)}`);
     }
 
     if (error.response?.status === 403) {

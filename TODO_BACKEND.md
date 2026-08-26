@@ -4,6 +4,24 @@ This checklist covers the server, database, real-time systems, integrations,
 security, operations, and deployment work required for a production NH Terminal
 release.
 
+## Current development foundation (local prototype)
+
+- [x] Add a local Node HTTP API with a health endpoint and environment-configured port.
+- [x] Add local JSON persistence that can later be replaced by a database repository.
+- [x] Add a working dummy administrator login endpoint and authenticated frontend session flow.
+- [x] Add demo profile, preference, password-change, and logout endpoints for local and Vercel environments.
+- [x] Add WIB-aware calendar period, country, impact, and search filtering with source and freshness metadata.
+- [x] Add demo forum comment/reply, chat read-state/delivery, and role-aware announcement detail endpoints.
+- [x] Add development endpoints for profiles, tiers, signals, market data, calendar, outlook, research, sentiment, forum posts, chat, announcements, courses, and live-session metadata.
+- [x] Add local create mutations for signals, forum posts, chat messages, and announcements.
+- [x] Add Vercel API routing and frontend SPA routing configuration.
+- [ ] Replace simulated/local market values with licensed production provider data.
+- [ ] Replace local JSON storage with a managed relational database and migrations.
+- [ ] Replace the development token/session model with secure server-managed authentication.
+
+> The completed items above describe development scaffolding only. They do not
+> satisfy the production architecture, security, licensing, or operations items below.
+
 ## 1. Architecture and environments
 
 - [ ] Choose and document the backend stack, runtime, framework, database, cache, job queue, object storage, and hosting platform.
@@ -81,9 +99,9 @@ release.
 
 - [ ] Implement list/detail/history endpoints with cursor pagination and filters.
 - [ ] Implement role-protected create, edit, publish, close, cancel, and delete/archive operations.
-- [ ] Validate instrument, BUY/SELL direction, entry, stop loss, targets, and logical price relationships.
+- [x] Validate instrument fields, BUY/SELL direction, entry, stop loss, targets, and logical price relationships in the demo API.
 - [ ] Use a clear signal state machine such as draft, scheduled, published, running, target-hit, stopped, cancelled, and expired.
-- [ ] Record every status/value change in immutable signal history.
+- [x] Record demo signal status changes in append-only per-signal history arrays.
 - [ ] Calculate pip performance consistently by instrument precision and contract rules.
 - [ ] Update running signals from trusted market prices.
 - [ ] Make publish/close operations idempotent and transaction-safe.
@@ -250,4 +268,3 @@ release.
 - [ ] Staging matches production architecture closely enough to expose deployment issues.
 - [ ] Security, privacy, legal, accessibility, performance, and load-testing release gates are complete.
 - [ ] Production monitoring, alerting, ownership, support, and incident-response coverage are active before launch.
-

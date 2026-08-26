@@ -207,6 +207,8 @@
     gap: 13px;
     font-size: 14px
 }
+.calendar-row { width:100%;border:1px solid #26313e;color:inherit;text-align:left;font:inherit;cursor:pointer }
+.calendar-row:hover,.calendar-row:focus-visible{border-color:#b7900c;outline:none}
 
 .calendar-row>i,
 .latest-meta>i {

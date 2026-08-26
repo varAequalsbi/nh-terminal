@@ -1,34 +1,311 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Activity, BarChart2, Calendar, ChevronDown, Search } from 'lucide-react';
+import { Activity, BarChart2, Calendar, ChevronDown, Pencil, Search } from 'lucide-react';
 import './market.css';
+import { dataService, queryKeys } from '../../services/dataService';
+import { AsyncBoundary } from '../Common/AsyncStates';
+import TradingViewChart from './TradingViewChart';
 
-const tabs=[['chart','Chart',BarChart2],['outlook','Outlook',Activity],['research','Research',Search],['calendar','Kalender',Calendar]];
+const tabs = [
+  ['chart', 'Chart', BarChart2],
+  ['outlook', 'Outlook', Activity],
+  ['research', 'Research', Search],
+  ['calendar', 'Kalender', Calendar],
+];
 
-function MarketHeader({active,setActive}){
-    return <section className="market-header"><div><h1>MARKET</h1><p>Market Overview</p></div><nav>{tabs.map(([id,label,Icon])=><button key={id} className={active===id?'active':''} onClick={()=>setActive(id)}><Icon/>{label}</button>)}</nav></section>
+function MarketHeader({ active, setActive }) {
+  return (
+    <section className="market-header">
+      <div>
+        <h1>MARKET</h1>
+        <p>Market Overview</p>
+      </div>
+      <nav>
+        {tabs.map(([id, label, Icon]) => (
+          <button key={id} className={active === id ? 'active' : ''} onClick={() => setActive(id)}>
+            <Icon />
+            {label}
+          </button>
+        ))}
+      </nav>
+    </section>
+  );
 }
 
-function ChartView(){const[symbol,setSymbol]=useState('XAUUSD');const[data,setData]=useState(()=>Array.from({length:32},(_,i)=>({x:i*30,y:170+Math.random()*220})));useEffect(()=>{setData(Array.from({length:32},(_,i)=>({x:i*30,y:170+Math.random()*220})))},[symbol]);useEffect(()=>{const timer=setInterval(()=>setData(old=>[...old.slice(1).map((p,i)=>({...p,x:i*30})),{x:930,y:140+Math.random()*260}]),1400);return()=>clearInterval(timer)},[]);const line=useMemo(()=>data.map((p,i)=>`${i?'L':'M'}${p.x} ${p.y.toFixed(1)}`).join(' '),[data]);return <section className="chart-view market-panel"><div className="symbol-tabs">{['XAUUSD','EURUSD','GBPUSD','USDJPY','BTCUSD'].map(x=><button onClick={()=>setSymbol(x)} className={symbol===x?'active':''} key={x}>{x}</button>)}</div><div className="chart-placeholder"><span className="demo-chart-label">{symbol} · Live dummy feed</span><svg className="market-demo-chart" viewBox="0 0 930 550" preserveAspectRatio="none"><defs><linearGradient id="marketDemoFill" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#c49a22" stopOpacity=".3"/><stop offset="1" stopColor="#c49a22" stopOpacity=".02"/></linearGradient></defs><path d={`${line} L930 550 L0 550Z`} fill="url(#marketDemoFill)"/><path d={line} fill="none" stroke="#c49a22" strokeWidth="3"/></svg></div></section>}
+function ChartView() {
+  const [symbol, setSymbol] = useState('XAUUSD');
+  const brokerSymbol = `ICMARKETS:${symbol}`;
+  return (
+    <section className="chart-view market-panel">
+      <div className="symbol-tabs">
+        {['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'BTCUSD'].map((x) => (
+          <button onClick={() => setSymbol(x)} className={symbol === x ? 'active' : ''} key={x}>
+            {x}
+          </button>
+        ))}
+      </div>
+      <div className="chart-tools-hint" role="note">
+        <Pencil aria-hidden="true" />
+        Use the left toolbar to draw trend lines, levels, shapes, and annotations.
+      </div>
+      <TradingViewChart symbol={brokerSymbol} drawingTools />
+      <a
+        className="tradingview-attribution"
+        href={`https://www.tradingview.com/symbols/${symbol}/?exchange=ICMARKETS`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {brokerSymbol} chart by TradingView
+      </a>
+    </section>
+  );
+}
 
-const sentiment=[['XAUUSD','Bearish 72%',72,'red'],['DXY','Bullish 68%',68,'green'],['BTCUSD','Bullish 74%',74,'green'],['SPX500','Netral 51%',51,'yellow']];
-function OutlookView(){return <section className="outlook-view"><div><h2><Calendar/> DAILY OUTLOOK</h2><article className="outlook-card"><b>NH AI · Daily Outlook</b><h3>XAUUSD: Tekanan Bearish, Waspada NFP</h3><p>Gold Bergerak Di Bawah Resistance 3,435. DXY Yang Menguat<br/>Memberikan Tekanan Pada Emas. Struktur H4 Masih Bearish<br/>Selama Harga Di Bawah 3,440. Menjelang NFP, Pasar Cenderung<br/>Menunggu.</p><div className="levels"><div><strong>Support</strong><span>3,410</span><span>3,395</span><span>3,380</span></div><i/><div><strong>Resistance</strong><span>3,428</span><span>3,445</span><span>3,460</span></div></div></article></div><div><h2><Calendar/> SENTIMEN PASAR</h2><div className="sentiment-list">{sentiment.map(([pair,text,val,tone])=><div className="sentiment-row" key={pair}><b>{pair}</b><span><i className={tone} style={{width:`${val}%`}}/></span><strong>{text}</strong></div>)}</div></div></section>}
+function OutlookView() {
+  const query = useQuery({ queryKey: ['market-outlook'], queryFn: dataService.market.outlook });
+  const x = query.data;
+  return (
+    <AsyncBoundary isLoading={query.isLoading} error={query.error} data={x} onRetry={query.refetch}>
+      {x && (
+        <section className="outlook-view">
+          <div>
+            <h2>
+              <Calendar /> DAILY OUTLOOK
+            </h2>
+            <article className="outlook-card">
+              <b>{x.author} · Daily Outlook</b>
+              <h3>{x.title}</h3>
+              <p>{x.body}</p>
+              <div className="levels">
+                <div>
+                  <strong>Support</strong>
+                  {x.support.map((v) => (
+                    <span key={v}>{v.toLocaleString()}</span>
+                  ))}
+                </div>
+                <i />
+                <div>
+                  <strong>Resistance</strong>
+                  {x.resistance.map((v) => (
+                    <span key={v}>{v.toLocaleString()}</span>
+                  ))}
+                </div>
+              </div>
+            </article>
+          </div>
+          <div>
+            <h2>
+              <Calendar /> MARKET SENTIMENT
+            </h2>
+            <div className="sentiment-list">
+              {x.sentiment.map((item) => (
+                <div className="sentiment-row" key={item.symbol}>
+                  <b>{item.symbol}</b>
+                  <span>
+                    <i
+                      className={
+                        item.label === 'Bearish'
+                          ? 'red'
+                          : item.label === 'Bullish'
+                            ? 'green'
+                            : 'yellow'
+                      }
+                      style={{ width: `${item.value}%` }}
+                    />
+                  </span>
+                  <strong>
+                    {item.label} {item.value}%
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+    </AsyncBoundary>
+  );
+}
 
-const sessions=[['ASIA','Open'],['LONDON','Open'],['NEW YORK','Upcoming'],['NEW YORK','Upcoming']];
-function ResearchView(){return <section className="research-view"><div className="session-cards">{sessions.map(([city,status],i)=><article key={i}><div><b>{city}</b><i/><strong className={status==='Open'?'open':'upcoming'}>{status}</strong><span>07:00–16:00 WIB</span></div><hr/><h4>Market Overview</h4><p>Pasar Asia Sepi. JPY Menguat Tipis Pasca Trade Balance Jepang. Gold<br/>Terbatas Di Kisaran 3,415–3,425.</p></article>)}</div><h2><Calendar/> KEY MARKET DRIVERS</h2><div className="driver-tags">{['DXY Strength','Gold Pressure','NFP Ahead','JPY Weakness'].map(x=><button key={x}><BarChart2/>{x}</button>)}</div><h2><Calendar/> SESSION OVERVIEW</h2><div className="session-overview"><div><h3>Current Session</h3><span>LONDON <i/> <b>Open</b></span></div><u/><div><h3>Next Session</h3><span>New York <i/> <b>Upcoming - 3h 30m</b></span></div><u/><div className="activity"><h3>Market Activity</h3><span>Moderate</span></div><svg viewBox="0 0 250 70" preserveAspectRatio="none"><defs><linearGradient id="marketGreen" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#51ef52" stopOpacity=".3"/><stop offset="1" stopColor="#51ef52" stopOpacity=".08"/></linearGradient></defs><path d="M0 22L57 13L124 27L208 4L250 18L250 70L0 70Z" fill="url(#marketGreen)"/><path d="M0 22L57 13L124 27L208 4L250 18" fill="none" stroke="#57f14e" strokeWidth="3"/></svg></div></section>}
+function ResearchView() {
+  const query = useQuery({ queryKey: ['market-research'], queryFn: dataService.market.research });
+  const x = query.data;
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => { const id = setInterval(() => setNow(new Date()), 60_000); return () => clearInterval(id); }, []);
+  const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+  const minute = wib.getUTCHours() * 60 + wib.getUTCMinutes();
+  const definitions = [{ name: 'NEW YORK', start: 19 * 60, end: 4 * 60 }, { name: 'LONDON', start: 14 * 60, end: 23 * 60 }, { name: 'ASIA', start: 7 * 60, end: 16 * 60 }];
+  const isOpen = (session) => session.start < session.end ? minute >= session.start && minute < session.end : minute >= session.start || minute < session.end;
+  const current = definitions.find(isOpen);
+  const next = definitions.map((session) => ({ ...session, wait: (session.start - minute + 1440) % 1440 || 1440 })).sort((a, b) => a.wait - b.wait)[0];
+  const countdown = `${String(Math.floor(next.wait / 60)).padStart(2, '0')}h ${String(next.wait % 60).padStart(2, '0')}m`;
+  return (
+    <AsyncBoundary isLoading={query.isLoading} error={query.error} data={x} onRetry={query.refetch}>
+      {x && (
+        <section className="research-view">
+          <div className="session-cards">
+            {x.sessions.map((item) => (
+              <article key={item.name}>
+                <div>
+                  <b>{item.name}</b>
+                  <i />
+                  <strong className={definitions.find((session) => session.name === item.name && isOpen(session)) ? 'open' : 'upcoming'}>
+                    {definitions.find((session) => session.name === item.name && isOpen(session)) ? 'Open' : 'Closed'}
+                  </strong>
+                  <span>{item.hours}</span>
+                </div>
+                <hr />
+                <h4>Market Overview</h4>
+                <p>{item.summary}</p>
+              </article>
+            ))}
+          </div>
+          <h2>
+            <Calendar /> KEY MARKET DRIVERS
+          </h2>
+          <div className="driver-tags">
+            {x.drivers.map((item) => (
+              <button key={item}>
+                <BarChart2 />
+                {item}
+              </button>
+            ))}
+          </div>
+          <h2>
+            <Calendar /> SESSION OVERVIEW
+          </h2>
+          <div className="session-overview">
+            <div>
+              <h3>Current Session</h3>
+              <span>
+                {current?.name || 'MARKET BREAK'} <i /> <b>{current ? 'Open' : 'Closed'}</b>
+              </span>
+            </div>
+            <u />
+            <div>
+              <h3>Next Session</h3>
+              <span>
+                {next.name} <i /> <b>in {countdown}</b>
+              </span>
+            </div>
+            <u />
+            <div className="activity">
+              <h3>Market Activity</h3>
+              <span>{x.activity}</span>
+            </div>
+          </div>
+        </section>
+      )}
+    </AsyncBoundary>
+  );
+}
 
-const calendarItems=['high','medium','high','high','low','low','high','high'];
-function Flag(){return <img className="us-flag" src="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3/us.svg" alt="United States"/>}
-function EventRow({tone}){return <article className="market-event"><span className="cal-time">15:30</span><i/><Flag/><i/><b className={tone}>{tone.toUpperCase()}</b><i/><strong>Non-Farm Payrolls</strong><i/><span>Prev 272K</span><i/><span>Forecast 185K</span><div className={`event-bars ${tone}`}><u/><u/><u/></div></article>}
-function CalendarView(){const[period,setPeriod]=useState('Today');const[impact,setImpact]=useState('All');const[query,setQuery]=useState('');const items=calendarItems.filter(x=>(impact==='All'||x===impact.toLowerCase())&&'Non-Farm Payrolls'.toLowerCase().includes(query.toLowerCase()));return <section className="calendar-view"><div className="calendar-filters market-panel"><div>{['Today','Tomorrow','This Week'].map(x=><button className={period===x?'active':''} onClick={()=>setPeriod(x)} key={x}>{x}</button>)}<span/>{['All','High','Medium','Low'].map(x=><button className={`${impact===x?'active ':''}compact`} onClick={()=>setImpact(x)} key={x}>{x}</button>)}</div><hr/><div><label><Search/><input placeholder="Search Event..." value={query} onChange={e=>setQuery(e.target.value)}/></label><span/><button onClick={()=>window.alert('Country: United States (demo)')}>Country<ChevronDown/></button><button onClick={()=>setImpact(impact==='All'?'High':'All')}>Impact<ChevronDown/></button></div></div><div className="event-list">{items.map((x,i)=><EventRow tone={x} key={i}/>)}</div></section>}
+const countryFlags = { 'United States': '🇺🇸', Germany: '🇩🇪', Japan: '🇯🇵', Australia: '🇦🇺' };
+const wibTime = (date) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(date));
+function Highlight({ text, query }) {
+  if (!query) return text;
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index < 0) return text;
+  return <>{text.slice(0, index)}<mark>{text.slice(index, index + query.length)}</mark>{text.slice(index + query.length)}</>;
+}
+function EventRow({ item, expanded, onToggle, search }) {
+  return (
+    <article className={`market-event ${expanded ? 'expanded' : ''}`} id={`event-${item.id}`}>
+      <button className="event-summary" onClick={onToggle} aria-expanded={expanded}>
+        <span className="cal-time">{wibTime(item.date)} WIB</span><i />
+        <span className="country-flag" role="img" aria-label={item.country}>{countryFlags[item.country] || '🌐'}</span><i />
+        <b className={item.impact}>{item.impact.toUpperCase()}</b><i />
+        <strong><Highlight text={item.event} query={search} /></strong><i />
+        <span>Prev {item.previous || '-'}</span><i />
+        <span>Forecast {item.forecast || '-'}</span>
+        <div className={`event-bars ${item.impact}`}><u /><u /><u /></div>
+        <ChevronDown className="event-chevron" />
+      </button>
+      {expanded && <div className="event-details"><div><span>Actual</span><b>{item.actual || 'Not released'}</b></div><div><span>Previous</span><b>{item.previous || '-'}</b></div><div><span>Forecast</span><b>{item.forecast || '-'}</b></div><div><span>Source</span><b>{item.source || 'Unavailable'}</b></div><div><span>Revision</span><b>{item.revision || 'None'}</b></div><div><span>Release time</span><b>{new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.date))} WIB</b></div></div>}
+    </article>
+  );
+}
+function CalendarView() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [period, setPeriod] = useState('Today');
+  const [impact, setImpact] = useState('All');
+  const [country, setCountry] = useState('All');
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(searchParams.get('event') || '');
+  useEffect(() => { const id = setTimeout(() => setSearch(searchInput.trim()), 350); return () => clearTimeout(id); }, [searchInput]);
+  const params = {
+    impact: impact === 'All' ? undefined : impact.toLowerCase(),
+    country: country === 'All' ? undefined : country,
+    search: search || undefined,
+    period,
+  };
+  const query = useQuery({
+    queryKey: queryKeys.calendar(params),
+    queryFn: () => dataService.market.calendar(params),
+  });
+  const items = query.data?.items || [];
+  return (
+    <section className="calendar-view">
+      <div className="calendar-filters market-panel">
+        <div>
+          {['Today', 'Tomorrow', 'This Week'].map((x) => (
+            <button className={period === x ? 'active' : ''} onClick={() => setPeriod(x)} key={x}>
+              {x}
+            </button>
+          ))}
+          <span />
+          {['All', 'High', 'Medium', 'Low'].map((x) => (
+            <button
+              className={`${impact === x ? 'active ' : ''}compact`}
+              onClick={() => setImpact(x)}
+              key={x}
+            >
+              {x}
+            </button>
+          ))}
+        </div>
+        <hr />
+        <div>
+          <label>
+            <Search />
+            <input
+              placeholder="Search Event..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </label>
+          <span />
+          <select aria-label="Filter by country" value={country} onChange={(e) => setCountry(e.target.value)}><option>All</option>{(query.data?.countries || []).map((item) => <option key={item}>{item}</option>)}</select>
+          <select aria-label="Filter by impact" value={impact} onChange={(e) => setImpact(e.target.value)}>{['All', 'High', 'Medium', 'Low'].map((item) => <option key={item}>{item}</option>)}</select>
+        </div>
+      </div>
+      <div className="calendar-data-state"><span>Timezone: WIB</span><span>Updated {query.data?.updatedAt ? new Date(query.data.updatedAt).toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }) : '—'} WIB</span><span>{query.isFetching ? 'Refreshing…' : 'Data current'}</span></div>
+      <AsyncBoundary
+        isLoading={query.isLoading}
+        error={query.error}
+        data={items}
+        onRetry={query.refetch}
+      >
+        <div className="event-list">
+          {items.map((item) => (
+            <EventRow item={item} search={search} expanded={expanded === item.id} onToggle={() => { const next = expanded === item.id ? '' : item.id; setExpanded(next); const params = new URLSearchParams(searchParams); if (next) params.set('event', next); else params.delete('event'); params.set('tab', 'calendar'); setSearchParams(params); }} key={item.id} />
+          ))}
+        </div>
+      </AsyncBoundary>
+    </section>
+  );
+}
 
-export default function MarketOverview(){
+export default function MarketOverview() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
   const validTabs = ['chart', 'outlook', 'research', 'calendar'];
   const resolvedTab = tabParam === 'kalender' ? 'calendar' : tabParam;
 
-  const [active, setActive] = useState(() => (resolvedTab && validTabs.includes(resolvedTab) ? resolvedTab : 'chart'));
+  const [active, setActive] = useState(() =>
+    resolvedTab && validTabs.includes(resolvedTab) ? resolvedTab : 'chart'
+  );
 
   useEffect(() => {
     if (resolvedTab && validTabs.includes(resolvedTab)) {
@@ -43,11 +320,11 @@ export default function MarketOverview(){
 
   return (
     <div className="market-page">
-      <MarketHeader active={active} setActive={handleTabChange}/>
-      {active==='chart'&&<ChartView/>}
-      {active==='outlook'&&<OutlookView/>}
-      {active==='research'&&<ResearchView/>}
-      {active==='calendar'&&<CalendarView/>}
+      <MarketHeader active={active} setActive={handleTabChange} />
+      {active === 'chart' && <ChartView />}
+      {active === 'outlook' && <OutlookView />}
+      {active === 'research' && <ResearchView />}
+      {active === 'calendar' && <CalendarView />}
     </div>
   );
 }

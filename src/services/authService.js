@@ -18,8 +18,9 @@ export const authService = {
     return response.data;
   },
 
-  logout: () => {
-    localStorage.removeItem('authToken');
+  logout: async () => {
+    try { await api.post('/auth/logout'); }
+    finally { localStorage.removeItem('authToken'); }
   },
 
   getCurrentUser: async () => {
@@ -47,6 +48,16 @@ export const authService = {
 
   updateProfile: async (userData) => {
     const response = await api.put('/auth/profile', userData);
+    return response.data;
+  },
+
+  updatePreferences: async (preferences) => {
+    const response = await api.put('/auth/preferences', preferences);
+    return response.data;
+  },
+
+  updatePassword: async (currentPassword, newPassword) => {
+    const response = await api.post('/auth/password', { currentPassword, newPassword });
     return response.data;
   },
 };

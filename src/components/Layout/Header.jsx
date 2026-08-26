@@ -45,7 +45,7 @@ export default function Header({ onTabChange, onLogout }) {
           </button>
         ))}
       </nav>
-      <div className="header-tools"><button className="settings"><Settings size={20}/> SETTINGS</button><button onClick={onLogout} aria-label="Logout"><LogOut size={20}/></button><button className="menu" onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button></div>
+      <div className="header-tools"><button className={`settings ${current === 'settings' ? 'active' : ''}`} onClick={() => go('settings')}><Settings size={20}/> SETTINGS</button><button onClick={onLogout} aria-label="Logout"><LogOut size={20}/></button><button className="menu" onClick={()=>setOpen(!open)} aria-label="Toggle navigation">{open?<X/>:<Menu/>}</button></div>
     </div>
   </header>;
 }

@@ -1,171 +1,64 @@
-import React, { useMemo, useState } from 'react';
-import {
-  ChevronDown, PlusCircle, Cpu, ImageDown, Lightbulb,
-  Search, Crosshair, X,
-} from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CheckCircle2, Cpu, Crosshair, Lightbulb, PlusCircle, Search, Trash2, X } from 'lucide-react';
 import './signals.css';
+import { useUrlState } from '../../hooks/useUrlState';
+import { dataService, queryKeys } from '../../services/dataService';
+import { AsyncBoundary } from '../Common/AsyncStates';
+import TradingViewChart from '../Market/TradingViewChart';
+import { readSession } from '../../auth/session';
 
-const signalSeed = [
-  ['SELL', 200, true], ['BUY', 250, false], ['SELL', -90, false],
-  ['SELL', 200, false], ['BUY', 250, false], ['SELL', 200, true],
-  ['SELL', -90, false], ['SELL', 200, false], ['SELL', -90, false],
-  ['SELL', 200, false],
-];
+const symbols = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'BTCUSD'];
+const sessions = ['Asia', 'London', 'New York'];
+const messageFor = (error) => error.response?.data?.message || error.message || 'Something went wrong.';
 
 function MiniChart({ positive }) {
-  const path = positive
-    ? 'M0 8 L31 48 L45 35 L61 67 L72 19 L91 79 L111 27 L122 70 L132 51 L140 95'
-    : 'M0 8 L31 48 L45 35 L61 67 L72 19 L91 79 L111 27 L122 70 L132 51 L140 95';
-  return (
-    <svg viewBox="0 0 140 104" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id={positive ? 'greenFill' : 'redFill'} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={positive ? '#35d94a' : '#e00008'} stopOpacity=".28" />
-          <stop offset="1" stopColor={positive ? '#35d94a' : '#e00008'} stopOpacity=".06" />
-        </linearGradient>
-      </defs>
-      <path d={`${path} L140 104 L0 104 Z`} fill={`url(#${positive ? 'greenFill' : 'redFill'})`} />
-      <path d={path} fill="none" stroke={positive ? '#50f15b' : '#ef0008'} strokeWidth="2.2" />
-    </svg>
-  );
+  const path = 'M0 8 L31 48 L45 35 L61 67 L72 19 L91 79 L111 27 L122 70 L132 51 L140 95';
+  return <svg viewBox="0 0 140 104" preserveAspectRatio="none" aria-hidden="true"><path d={`${path} L140 104 L0 104 Z`} fill={positive ? '#173e22' : '#4a1016'} /><path d={path} fill="none" stroke={positive ? '#50f15b' : '#ef0008'} strokeWidth="2.2" /></svg>;
 }
-
-function Metric({ label, value, tone = 'white' }) {
-  return (
-    <div className="signal-metric">
-      <span>{label}</span>
-      <strong className={tone}>{value}</strong>
-      <span className="metric-watermark">$↗</span>
-    </div>
-  );
+function Metric({ label, value, tone = '' }) { return <div className="signal-metric"><span>{label}</span><strong className={tone}>{value}</strong><span className="metric-watermark">$↗</span></div>; }
+function SignalCard({ item, onOpen }) {
+  const positive = item.direction === 'BUY';
+  return <article className="signal-card" tabIndex="0" onClick={() => onOpen(item)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onOpen(item)}><div className="signal-card-top"><div className="signal-meta"><span className={`trade-pill ${positive ? 'buy' : 'sell'}`}>{item.direction}</span><i /><span>{item.symbol}</span><i /><span>{item.session} Session</span>{item.status === 'running' && <><b className="live-dot" /><em>LIVE</em></>}</div><span className={`pips ${item.pips < 0 ? 'loss' : ''}`}>{item.pips > 0 ? '+' : ''}{item.pips || 0} Pips</span></div><div className="published"><span>Published {new Date(item.createdAt).toLocaleString()}</span><small>{item.status}</small></div><div className="card-data"><div className="metrics-grid"><Metric label="ENTRY" value={item.entry} /><Metric label="SL" value={item.stopLoss} tone="red" /><Metric label="TP 1" value={item.targets?.[0] ?? '-'} tone="green" /><Metric label="TP 2" value={item.targets?.[1] ?? '-'} tone="green" /></div><div className="mini-chart"><MiniChart positive={positive} /></div></div><div className="signal-note"><Lightbulb /><span>{item.analysis}</span></div></article>;
 }
-
-function SignalCard({ item }) {
-  const [type, pips, live] = item;
-  const positive = type === 'BUY';
-  return (
-    <article className="signal-card">
-      <div className="signal-card-top">
-        <div className="signal-meta">
-          <span className={`trade-pill ${positive ? 'buy' : 'sell'}`}>{type}</span>
-          <i /> <span>XAU/USD</span> <i /> <span>London Session</span>
-          {live && <><b className="live-dot" /><em>LIVE</em></>}
-        </div>
-        <span className={`pips ${pips < 0 ? 'loss' : ''}`}>{pips > 0 ? '+' : ''}{pips} Pips</span>
-      </div>
-      <div className="published"><span>Published - 09:45 WIB - 5 Menit Lalu</span><small>Running</small></div>
-      <div className="card-data">
-        <div className="metrics-grid">
-          <Metric label="ENTRY" value="3428.50" />
-          <Metric label="SL" value="3428.50" tone="red" />
-          <Metric label="TP 1" value="3428.50" tone="green" />
-          <Metric label="TP 2" value="3428.50" tone="green" />
-        </div>
-        <div className="mini-chart"><MiniChart positive={positive} /></div>
-      </div>
-      <div className="signal-note"><Lightbulb size={17} /> <span>Resistance H4 Kuat, Divergence Bearish H1</span></div>
-    </article>
-  );
-}
-
-function SignalForm({ onPublish }) {
-  const [type, setType] = useState('BUY');
-  const [form, setForm] = useState({ entry: '', sl: '', tp1: '', tp2: '', note: '' });
+function SignalForm({ onPublish, pending }) {
+  const [direction, setDirection] = useState('BUY');
+  const [form, setForm] = useState({ symbol: 'XAUUSD', session: 'London', entry: '', stopLoss: '', tp1: '', tp2: '', analysis: '' });
+  const [error, setError] = useState('');
   const update = (key) => (event) => setForm({ ...form, [key]: event.target.value });
-  const publish = () => {
-    if (!form.entry || !form.sl || !form.tp1) return window.alert('Entry, Stop Loss, and TP 1 are required.');
-    onPublish([type, 0, true]);
-    setForm({ entry: '', sl: '', tp1: '', tp2: '', note: '' });
+  const submit = (event) => {
+    event.preventDefault();
+    const input = { source: 'expert', symbol: form.symbol, session: form.session, direction, entry: Number(form.entry), stopLoss: Number(form.stopLoss), targets: [Number(form.tp1), form.tp2 ? Number(form.tp2) : null].filter((x) => x !== null), analysis: form.analysis.trim() };
+    if (!form.entry || !form.stopLoss || !form.tp1 || !input.analysis) return setError('Entry, stop loss, TP1, and analysis are required.');
+    if (direction === 'BUY' && !(input.stopLoss < input.entry && input.targets.every((x) => x > input.entry))) return setError('BUY requires stop loss below entry and targets above entry.');
+    if (direction === 'SELL' && !(input.stopLoss > input.entry && input.targets.every((x) => x < input.entry))) return setError('SELL requires stop loss above entry and targets below entry.');
+    if (!window.confirm(`Publish ${direction} ${form.symbol} signal?`)) return;
+    setError(''); onPublish(input);
   };
-  return (
-    <section className="new-signal-panel">
-      <h2>SIGNAL BARU</h2>
-      <div className="signal-form-grid">
-        <div className="signal-type">
-          <label>SIGNAL TYPE</label>
-          <button className={type === 'BUY' ? 'selected-buy' : ''} onClick={() => setType('BUY')}>BUY</button>
-          <button className={type === 'SELL' ? 'selected-buy' : ''} onClick={() => setType('SELL')}>SELL</button>
-        </div>
-        <div className="form-divider" />
-        <div className="field-column">
-          <label>Entry</label><input aria-label="Entry" value={form.entry} onChange={update('entry')} />
-          <label>Stop Loss</label><input aria-label="Stop Loss" value={form.sl} onChange={update('sl')} />
-          <label>TP 1</label><input aria-label="TP 1" value={form.tp1} onChange={update('tp1')} />
-          <label>TP 2 (Opsional)</label><input aria-label="TP 2" value={form.tp2} onChange={update('tp2')} />
-        </div>
-        <div className="form-divider" />
-        <div className="field-column publish-column">
-          <label>Symbol</label><input aria-label="Symbol" value="XAUUSD" readOnly />
-          <label>Catatan / Analisa</label><input aria-label="Catatan" value={form.note} onChange={update('note')} />
-          <label>Upload Chart</label>
-          <div className="upload-row">
-            <label className="upload-button" aria-label="Upload chart"><ImageDown size={54} /><input type="file" accept="image/*" hidden /></label>
-            <button className="publish-button" onClick={publish}>PUBLISH SIGNAL</button>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <form className="new-signal-panel" onSubmit={submit}><h2>NEW SIGNAL</h2><div className="signal-form-grid"><div className="signal-type"><label>SIGNAL TYPE</label><button type="button" className={direction === 'BUY' ? 'selected-buy' : ''} onClick={() => setDirection('BUY')}>BUY</button><button type="button" className={direction === 'SELL' ? 'selected-sell' : ''} onClick={() => setDirection('SELL')}>SELL</button></div><div className="form-divider" /><div className="field-column"><label>Symbol<select value={form.symbol} onChange={update('symbol')}>{symbols.map((x) => <option key={x}>{x}</option>)}</select></label><label>Session<select value={form.session} onChange={update('session')}>{sessions.map((x) => <option key={x}>{x}</option>)}</select></label><label>Entry<input type="number" step="any" value={form.entry} onChange={update('entry')} /></label><label>Stop Loss<input type="number" step="any" value={form.stopLoss} onChange={update('stopLoss')} /></label></div><div className="form-divider" /><div className="field-column publish-column"><label>TP 1<input type="number" step="any" value={form.tp1} onChange={update('tp1')} /></label><label>TP 2 (Optional)<input type="number" step="any" value={form.tp2} onChange={update('tp2')} /></label><label>Analysis<textarea value={form.analysis} onChange={update('analysis')} maxLength="500" /></label>{error && <p className="form-error" role="alert">{error}</p>}<button className="publish-button" disabled={pending}>{pending ? 'PUBLISHING…' : 'PUBLISH SIGNAL'}</button></div></div></form>;
 }
-
+function SignalDetail({ item, canManage, onClose, onAction }) {
+  const history = item.history?.length ? item.history : [{ status: item.status, at: item.createdAt, note: 'Signal published' }];
+  return <div className="signal-modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}><section className="signal-modal" role="dialog" aria-modal="true" aria-labelledby="signal-detail-title"><header><div><span className={`trade-pill ${item.direction === 'BUY' ? 'buy' : 'sell'}`}>{item.direction}</span><h2 id="signal-detail-title">{item.symbol} · {item.session}</h2></div><button onClick={onClose} aria-label="Close signal details"><X /></button></header><div className="detail-chart"><TradingViewChart symbol={`ICMARKETS:${item.symbol}`} compact /></div><div className="detail-metrics"><Metric label="ENTRY" value={item.entry} /><Metric label="STOP LOSS" value={item.stopLoss} tone="red" /><Metric label="TP 1" value={item.targets?.[0] ?? '-'} tone="green" /><Metric label="TP 2" value={item.targets?.[1] ?? '-'} tone="green" /></div><p className="detail-analysis"><Lightbulb />{item.analysis}</p><h3>Status history</h3><ol className="status-history">{history.map((entry, index) => <li key={`${entry.at}-${index}`}><b>{entry.status}</b><span>{new Date(entry.at).toLocaleString()}</span><small>{entry.note}</small></li>)}</ol>{canManage && <footer><button onClick={() => onAction('edit')}>Edit analysis</button>{item.status === 'running' && <><button onClick={() => onAction('completed')}>Close as Win</button><button onClick={() => onAction('cancelled')}>Cancel</button></>}<button className="danger" onClick={() => onAction('delete')}><Trash2 />Delete</button></footer>}</section></div>;
+}
+function Toast({ toast, onClose }) {
+  useEffect(() => { if (!toast) return; const id = setTimeout(onClose, 4000); return () => clearTimeout(id); }, [toast, onClose]);
+  return toast && <div className={`signal-toast ${toast.type}`} role="status">{toast.type === 'success' && <CheckCircle2 />}{toast.message}<button onClick={onClose}><X /></button></div>;
+}
 export default function SignalsPage() {
-  const [mode, setMode] = useState('ai');
-  const [showAdminForm, setShowAdminForm] = useState(false);
-  const [signals, setSignals] = useState(signalSeed);
-  const [query, setQuery] = useState('');
-  const [history, setHistory] = useState(false);
-  const [sortNewest, setSortNewest] = useState(true);
-  const cards = useMemo(() => {
-    let result = signals.slice(0, mode === 'expert' ? 6 : 10);
-    if (query && !'XAUUSD'.includes(query.replace('/','').toUpperCase())) result = [];
-    if (!sortNewest) result = [...result].reverse();
-    return result;
-  }, [mode, signals, query, sortNewest]);
-
-  return (
-    <div className="signals-page">
-      <section className="signals-heading">
-        <div><h1>SIGNALS</h1><p>Live Trading Signals</p></div>
-        <div className="heading-actions">
-          <button onClick={() => setHistory(!history)}>{history ? 'View Active' : 'View History'}</button>
-          <button className="admin-button" onClick={() => setShowAdminForm(!showAdminForm)}>
-            {showAdminForm ? (
-              <>
-                <X size={17} />
-                <span>Tutup</span>
-              </>
-            ) : (
-              <>
-                <PlusCircle size={17} />
-                <span>Tambah Signal (Admin)</span>
-              </>
-            )}
-          </button>
-        </div>
-      </section>
-
-      {showAdminForm && <SignalForm onPublish={(item) => { setSignals([item, ...signals]); setShowAdminForm(false); window.alert('Demo signal published.'); }} />}
-
-      <section className="mode-bar">
-        <div className="mode-buttons">
-          <button className={mode === 'expert' ? 'active-mode' : ''} onClick={() => setMode('expert')}><Crosshair /> TIM EXPERT</button>
-          <button className={mode === 'ai' ? 'active-mode neutral' : ''} onClick={() => setMode('ai')}><Cpu /> AI REAL-TIME</button>
-        </div>
-        <span className="signal-count">128 Signals</span>
-      </section>
-
-      <section className="filters-section">
-        <h2><Search /> FILTER SIGNALS</h2>
-        <div className="filters-bar">
-          <label className="search-field"><Search /><input placeholder="Search XAUUSD..." value={query} onChange={(e) => setQuery(e.target.value)} /></label>
-          {['London Session', history ? 'Completed' : 'Running', 'All Results'].map((filter) => <button key={filter} onClick={() => window.alert(`${filter} demo filter selected`)}>{filter}<ChevronDown size={18} fill="currentColor" /></button>)}
-          <button onClick={() => setSortNewest(!sortNewest)}>{sortNewest ? 'Newest' : 'Oldest'}<ChevronDown size={18} fill="currentColor" /></button>
-        </div>
-      </section>
-
-      <section className="signals-grid">
-        {cards.length ? cards.map((item, index) => <SignalCard item={item} key={index} />) : <p>No matching signals.</p>}
-      </section>
-    </div>
-  );
+  const [view, setView, resetView] = useUrlState({ mode: 'ai', query: '', history: 'false', session: 'all', status: 'all', result: 'all', sort: 'newest' });
+  const [searchInput, setSearchInput] = useState(view.query || '');
+  const [showAdminForm, setShowAdminForm] = useState(false); const [selected, setSelected] = useState(null); const [toast, setToast] = useState(null);
+  const queryClient = useQueryClient(); const session = readSession(); const canManage = ['admin', 'super-admin', 'expert'].includes(session?.user?.role);
+  const mode = view.mode === 'expert' ? 'expert' : 'ai'; const history = view.history === 'true';
+  useEffect(() => { const id = setTimeout(() => setView({ query: searchInput }), 350); return () => clearTimeout(id); }, [searchInput]);
+  useEffect(() => setSearchInput(view.query || ''), [view.query]);
+  const params = { source: mode, search: view.query || undefined, history: history || undefined, session: view.session !== 'all' ? view.session : undefined, status: !history && view.status !== 'all' ? view.status : undefined, result: view.result !== 'all' ? view.result : undefined };
+  const signalsQuery = useQuery({ queryKey: queryKeys.signals(params), queryFn: () => dataService.signals.list(params), refetchInterval: 60_000 });
+  const mutation = useMutation({ mutationFn: ({ type, id, data }) => type === 'create' ? dataService.signals.create(data) : type === 'delete' ? dataService.signals.remove(id) : dataService.signals.update(id, data), onSuccess: (data, variables) => { queryClient.invalidateQueries({ queryKey: ['signals'] }); setShowAdminForm(false); if (variables.type === 'delete') setSelected(null); else if (variables.type !== 'create') setSelected(data); setToast({ type: 'success', message: variables.type === 'create' ? 'Signal published.' : variables.type === 'delete' ? 'Signal deleted.' : 'Signal updated.' }); }, onError: (error) => setToast({ type: 'error', message: messageFor(error) }) });
+  const cards = useMemo(() => { const result = signalsQuery.data?.items || []; return view.sort === 'oldest' ? [...result].reverse() : result; }, [signalsQuery.data, view.sort]);
+  const action = (type) => { if (type === 'delete') { if (window.confirm(`Delete ${selected.symbol} signal?`)) mutation.mutate({ type, id: selected.id }); return; } if (type === 'edit') { const analysis = window.prompt('Update signal analysis', selected.analysis); if (analysis?.trim()) mutation.mutate({ type: 'update', id: selected.id, data: { analysis: analysis.trim() } }); return; } if (window.confirm(`${type === 'completed' ? 'Close' : 'Cancel'} this signal?`)) mutation.mutate({ type: 'update', id: selected.id, data: { status: type, result: type === 'completed' ? 'win' : 'cancelled' } }); };
+  const hasFilters = searchInput || history || mode !== 'ai' || view.session !== 'all' || view.status !== 'all' || view.result !== 'all' || view.sort !== 'newest';
+  const reset = () => { resetView(); setSearchInput(''); };
+  return <div className="signals-page"><section className="signals-heading"><div><h1>SIGNALS</h1><p>Live Trading Signals · refreshed every minute</p></div><div className="heading-actions"><button onClick={() => setView({ history: String(!history), status: 'all' })}>{history ? 'View Active' : 'View History'}</button>{canManage && <button className="admin-button" onClick={() => setShowAdminForm(!showAdminForm)}>{showAdminForm ? <X /> : <PlusCircle />}<span>{showAdminForm ? 'Close' : 'Add Signal'}</span></button>}</div></section>{showAdminForm && <SignalForm pending={mutation.isPending} onPublish={(data) => mutation.mutate({ type: 'create', data })} />}<section className="mode-bar"><div className="mode-buttons"><button className={mode === 'expert' ? 'active-mode' : ''} onClick={() => setView({ mode: 'expert' })}><Crosshair /> TEAM EXPERT</button><button className={mode === 'ai' ? 'active-mode' : ''} onClick={() => setView({ mode: 'ai' })}><Cpu /> AI REAL-TIME</button></div><span className="signal-count">{signalsQuery.data?.total ?? 0} Signals</span></section><section className="filters-section"><h2><Search /> FILTER SIGNALS</h2><div className="filters-bar"><label className="search-field"><Search /><input placeholder="Search symbol or analysis…" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />{searchInput && <button type="button" onClick={() => setSearchInput('')} aria-label="Clear search"><X /></button>}</label><select aria-label="Session" value={view.session} onChange={(e) => setView({ session: e.target.value })}><option value="all">All Sessions</option>{sessions.map((x) => <option key={x} value={x}>{x}</option>)}</select><select aria-label="Status" value={history ? 'history' : view.status} disabled={history} onChange={(e) => setView({ status: e.target.value })}><option value="all">All Statuses</option><option value="running">Running</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option><option value="expired">Expired</option>{history && <option value="history">History</option>}</select><select aria-label="Result" value={view.result} onChange={(e) => setView({ result: e.target.value })}><option value="all">All Results</option><option value="win">Win</option><option value="loss">Loss</option><option value="cancelled">Cancelled</option></select><select aria-label="Sort order" value={view.sort} onChange={(e) => setView({ sort: e.target.value })}><option value="newest">Newest</option><option value="oldest">Oldest</option></select>{hasFilters && <button className="reset-filter" onClick={reset}>Reset</button>}</div></section><AsyncBoundary isLoading={signalsQuery.isLoading} error={signalsQuery.error} data={cards} onRetry={signalsQuery.refetch}><section className="signals-grid">{cards.map((item) => <SignalCard item={item} onOpen={setSelected} key={item.id} />)}</section></AsyncBoundary>{selected && <SignalDetail item={selected} canManage={canManage} onClose={() => setSelected(null)} onAction={action} />}<Toast toast={toast} onClose={() => setToast(null)} /></div>;
 }

@@ -1,0 +1,446 @@
+{
+  "profile": {
+    "id": "user-1",
+    "name": "Naufal H.",
+    "username": "Naufalh",
+    "email": "admin@nhterminal.local",
+    "role": "admin",
+    "tier": "PRIME",
+    "ibId": "380359",
+    "lots": 734,
+    "nextTier": "ELITE",
+    "nextTierLots": 1000,
+    "joinedAt": "2025-02-12T00:00:00.000Z",
+    "preferences": {
+      "language": "en",
+      "emailSignals": true,
+      "emailAnnouncements": true,
+      "browserNotifications": false
+    }
+  },
+  "tiers": [
+    {
+      "id": "inactive",
+      "name": "INACTIVE",
+      "minimumLots": 0,
+      "reward": "-"
+    },
+    {
+      "id": "trader",
+      "name": "TRADER",
+      "minimumLots": 50,
+      "reward": "NH Merchandise"
+    },
+    {
+      "id": "prime",
+      "name": "PRIME",
+      "minimumLots": 500,
+      "reward": "Samsung Galaxy A55"
+    },
+    {
+      "id": "elite",
+      "name": "ELITE",
+      "minimumLots": 1000,
+      "reward": "$1,000 Cash"
+    },
+    {
+      "id": "sultan",
+      "name": "SULTAN",
+      "minimumLots": 1500,
+      "reward": "iPhone 17 Pro Max"
+    }
+  ],
+  "signals": [
+    {
+      "id": "sig-1",
+      "source": "expert",
+      "symbol": "XAUUSD",
+      "direction": "SELL",
+      "entry": 4658.72,
+      "stopLoss": 4672,
+      "targets": [
+        4642,
+        4627.28
+      ],
+      "status": "running",
+      "result": "open",
+      "pips": 0,
+      "session": "London",
+      "analysis": "Price is testing the current intraday resistance area; manage risk around the live market level.",
+      "createdAt": "2026-08-25T02:45:00.000Z"
+    },
+    {
+      "id": "sig-2",
+      "source": "ai",
+      "symbol": "EURUSD",
+      "direction": "BUY",
+      "entry": 1.1662,
+      "stopLoss": 1.1622,
+      "targets": [
+        1.1702,
+        1.1742
+      ],
+      "status": "running",
+      "result": "open",
+      "pips": 25,
+      "session": "London",
+      "analysis": "Momentum recovery above intraday support.",
+      "createdAt": "2026-08-25T03:10:00.000Z"
+    },
+    {
+      "id": "sig-3",
+      "source": "expert",
+      "symbol": "GBPUSD",
+      "direction": "SELL",
+      "entry": 1.349,
+      "stopLoss": 1.354,
+      "targets": [
+        1.344,
+        1.339
+      ],
+      "status": "completed",
+      "result": "loss",
+      "pips": -50,
+      "session": "New York",
+      "analysis": "Rejection from daily supply.",
+      "createdAt": "2026-08-24T08:30:00.000Z"
+    },
+    {
+      "id": "sig-4",
+      "source": "ai",
+      "symbol": "USDJPY",
+      "direction": "BUY",
+      "entry": 147.2,
+      "stopLoss": 146.7,
+      "targets": [
+        147.8,
+        148.4
+      ],
+      "status": "completed",
+      "result": "win",
+      "pips": 120,
+      "session": "Asia",
+      "analysis": "Breakout confirmed above session range.",
+      "createdAt": "2026-08-23T23:20:00.000Z",
+      "updatedAt": "2026-08-26T16:33:21.191Z"
+    }
+  ],
+  "market": {
+    "XAUUSD": {
+      "symbol": "XAUUSD",
+      "price": 4658.72,
+      "change": 0.08,
+      "high": 4658.81,
+      "low": 4658.1,
+      "open": 4658.73
+    },
+    "EURUSD": {
+      "symbol": "EURUSD",
+      "price": 1.1668,
+      "change": 0.0012,
+      "high": 1.1681,
+      "low": 1.1639,
+      "open": 1.1656
+    },
+    "GBPUSD": {
+      "symbol": "GBPUSD",
+      "price": 1.3496,
+      "change": -0.0014,
+      "high": 1.3528,
+      "low": 1.3471,
+      "open": 1.351
+    },
+    "USDJPY": {
+      "symbol": "USDJPY",
+      "price": 147.42,
+      "change": 0.31,
+      "high": 147.78,
+      "low": 146.95,
+      "open": 147.11
+    },
+    "BTCUSD": {
+      "symbol": "BTCUSD",
+      "price": 112480,
+      "change": 820,
+      "high": 113240,
+      "low": 110950,
+      "open": 111660
+    }
+  },
+  "marketOutlook": {
+    "author": "NH AI",
+    "title": "XAUUSD: Consolidating near the current highs",
+    "body": "Gold is trading around the 4,650 area. The local preview levels are aligned with the latest provider reference and should be replaced by licensed streaming data in production.",
+    "support": [
+      4642,
+      4627.28,
+      4605
+    ],
+    "resistance": [
+      4672,
+      4696,
+      4720
+    ],
+    "sentiment": [
+      {
+        "symbol": "XAUUSD",
+        "label": "Bearish",
+        "value": 52
+      },
+      {
+        "symbol": "DXY",
+        "label": "Bullish",
+        "value": 48
+      },
+      {
+        "symbol": "BTCUSD",
+        "label": "Bullish",
+        "value": 74
+      },
+      {
+        "symbol": "SPX500",
+        "label": "Neutral",
+        "value": 51
+      }
+    ]
+  },
+  "marketResearch": {
+    "sessions": [
+      {
+        "name": "ASIA",
+        "status": "Open",
+        "hours": "07:00–16:00 WIB",
+        "summary": "JPY strengthened modestly after Japan trade data."
+      },
+      {
+        "name": "LONDON",
+        "status": "Open",
+        "hours": "14:00–23:00 WIB",
+        "summary": "Gold remains contained while traders await U.S. releases."
+      },
+      {
+        "name": "NEW YORK",
+        "status": "Upcoming",
+        "hours": "19:00–04:00 WIB",
+        "summary": "Volatility is expected around scheduled U.S. data."
+      }
+    ],
+    "drivers": [
+      "DXY Strength",
+      "Gold Pressure",
+      "NFP Ahead",
+      "JPY Weakness"
+    ],
+    "currentSession": "LONDON",
+    "nextSession": "NEW YORK",
+    "activity": "Moderate"
+  },
+  "calendar": [
+    {
+      "id": "evt-1",
+      "date": "2026-08-25T08:30:00.000Z",
+      "country": "United States",
+      "currency": "USD",
+      "impact": "high",
+      "event": "Non-Farm Payrolls",
+      "previous": "147K",
+      "forecast": "165K",
+      "actual": null,
+      "source": "U.S. Bureau of Labor Statistics",
+      "revision": "Previous revised from 144K"
+    },
+    {
+      "id": "evt-2",
+      "date": "2026-08-25T08:30:00.000Z",
+      "country": "United States",
+      "currency": "USD",
+      "impact": "medium",
+      "event": "Unemployment Rate",
+      "previous": "4.1%",
+      "forecast": "4.2%",
+      "actual": null,
+      "source": "U.S. Bureau of Labor Statistics"
+    },
+    {
+      "id": "evt-3",
+      "date": "2026-08-26T06:00:00.000Z",
+      "country": "Germany",
+      "currency": "EUR",
+      "impact": "low",
+      "event": "GfK Consumer Climate",
+      "previous": "-21.5",
+      "forecast": "-20.8",
+      "actual": null,
+      "source": "GfK",
+      "revision": null
+    },
+    {
+      "id": "evt-4",
+      "date": "2026-08-27T00:30:00.000Z",
+      "country": "Japan",
+      "currency": "JPY",
+      "impact": "medium",
+      "event": "Tokyo Core CPI",
+      "previous": "2.9%",
+      "forecast": "2.8%",
+      "actual": null,
+      "source": "Statistics Bureau of Japan",
+      "revision": null
+    },
+    {
+      "id": "evt-5",
+      "date": "2026-08-28T01:30:00.000Z",
+      "country": "Australia",
+      "currency": "AUD",
+      "impact": "low",
+      "event": "Retail Sales",
+      "previous": "0.3%",
+      "forecast": "0.4%",
+      "actual": null,
+      "source": "Australian Bureau of Statistics",
+      "revision": "Previous revised from 0.2%"
+    }
+  ],
+  "posts": [
+    {
+      "id": "post-1",
+      "author": "Arief S.",
+      "tier": "SULTAN",
+      "body": "Watching XAUUSD around the 4,650 area after the latest intraday move.",
+      "reactions": 93,
+      "comments": 29,
+      "createdAt": "2026-08-25T02:42:00.000Z"
+    },
+    {
+      "id": "post-2",
+      "author": "Dimas P.",
+      "tier": "PRIME",
+      "body": "Watching EURUSD support before the London continuation.",
+      "reactions": 48,
+      "comments": 12,
+      "createdAt": "2026-08-25T01:20:00.000Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": "comment-1",
+      "postId": "post-1",
+      "parentId": null,
+      "author": "Admin NH",
+      "role": "admin",
+      "body": "Keep risk controlled around the news window.",
+      "createdAt": "2026-08-25T03:10:00.000Z"
+    },
+    {
+      "id": "comment-2",
+      "postId": "post-1",
+      "parentId": "comment-1",
+      "author": "Naufal H.",
+      "role": "admin",
+      "body": "Agreed, position sizing is the priority.",
+      "createdAt": "2026-08-25T03:14:00.000Z"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "conv-admin",
+      "title": "Admin NH",
+      "unreadCount": 2,
+      "updatedAt": "2026-08-25T03:00:00.000Z"
+    },
+    {
+      "id": "conv-support",
+      "title": "Support",
+      "unreadCount": 0,
+      "updatedAt": "2026-08-24T09:00:00.000Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1",
+      "conversationId": "conv-admin",
+      "senderId": "admin",
+      "body": "Welcome to NH Terminal. How can we help?",
+      "createdAt": "2026-08-25T02:40:00.000Z",
+      "status": "read"
+    },
+    {
+      "id": "msg-2",
+      "conversationId": "conv-admin",
+      "senderId": "user-1",
+      "body": "I want to ask about upgrading to Elite.",
+      "createdAt": "2026-08-25T02:42:00.000Z",
+      "status": "delivered"
+    },
+    {
+      "id": "2a7eb7a5-d09e-4a7a-bca9-89311892c90a",
+      "conversationId": "conv-admin",
+      "senderId": "user-1",
+      "createdAt": "2026-08-26T08:25:34.612Z",
+      "status": "sent",
+      "body": "hello"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "aa33eb79-0fb9-4eb4-9bb1-134afe3fde8a",
+      "author": "Naufal H.",
+      "publishedAt": "2026-08-26T16:34:06.740Z",
+      "pinned": false,
+      "title": "this is a test announcement header",
+      "body": "this is a test announcement body"
+      ,"readBy": []
+    },
+    {
+      "id": "ann-1",
+      "title": "High-impact news today",
+      "body": "Estimated volatility is 80–150 pips. Review open positions and risk limits.",
+      "publishedAt": "2026-08-25T01:30:00.000Z",
+      "author": "Admin NH",
+      "pinned": true
+      ,"readBy": []
+    },
+    {
+      "id": "ann-2",
+      "title": "August reward program is open",
+      "body": "Eligible members can review their reward status from Profile.",
+      "publishedAt": "2026-08-24T03:00:00.000Z",
+      "author": "Admin NH",
+      "pinned": false
+      ,"readBy": []
+    }
+  ],
+  "courses": [
+    {
+      "id": "course-1",
+      "title": "Market Structure Fundamentals",
+      "requiredTier": "TRADER",
+      "durationSeconds": 750,
+      "progressSeconds": 0,
+      "completed": false
+    },
+    {
+      "id": "course-2",
+      "title": "Risk Management for Gold",
+      "requiredTier": "PRIME",
+      "durationSeconds": 900,
+      "progressSeconds": 140,
+      "completed": false
+    },
+    {
+      "id": "course-3",
+      "title": "Advanced Liquidity Concepts",
+      "requiredTier": "ELITE",
+      "durationSeconds": 1100,
+      "progressSeconds": 0,
+      "completed": false
+    }
+  ],
+  "liveSession": {
+    "id": "live-1",
+    "title": "NH Live Trade",
+    "embedUrl": "https://www.youtube.com/embed/jfKfPfyJRdk",
+    "status": "live",
+    "viewerCount": 283
+  }
+}
