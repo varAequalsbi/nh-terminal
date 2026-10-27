@@ -8,6 +8,7 @@ import Turnstile, { turnstileSiteKey } from './Turnstile';
 import './login.css';
 
 export default function LoginPage({ onLoginSuccess }) {
+  const isClientPreview = import.meta.env.VITE_DEMO_PREVIEW === 'true';
   const demoAccount = { email: 'admin@nhterminal.local', password: 'NHAdmin1234!' };
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,9 +107,11 @@ export default function LoginPage({ onLoginSuccess }) {
             </small>
           )}
           {errors.form && <small>{errors.form}</small>}
-          <Link className="forgot-link" to="/forgot-password">
-            Forgot Password?
-          </Link>
+          {!isClientPreview && (
+            <Link className="forgot-link" to="/forgot-password">
+              Forgot Password?
+            </Link>
+          )}
           <Turnstile action="login" onToken={setBotToken} resetKey={botReset} />
           <button className="login-submit" disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Log In'}
@@ -127,9 +130,11 @@ export default function LoginPage({ onLoginSuccess }) {
           <span>{demoAccount.email}</span>
           <span>{demoAccount.password}</span>
         </div>
-        <div className="signup-copy">
-          Don&apos;t Have Account? <Link to="/signup">Sign Up</Link>
-        </div>
+        {!isClientPreview && (
+          <div className="signup-copy">
+            Don&apos;t Have Account? <Link to="/signup">Sign Up</Link>
+          </div>
+        )}
       </section>
     </main>
   );

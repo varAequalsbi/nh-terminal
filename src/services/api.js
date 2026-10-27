@@ -15,6 +15,15 @@ const api = axios.create({
   },
 });
 
+// Vercel preview deployments can show the client the product before a hosted
+// database exists. This adapter is enabled only by an explicit preview setting.
+if (import.meta.env.VITE_DEMO_PREVIEW === 'true') {
+  api.defaults.adapter = async (config) => {
+    const { previewAdapter } = await import('../demo/previewAdapter');
+    return previewAdapter(config);
+  };
+}
+
 const readBrowserCookie = (name) => {
   if (typeof document === 'undefined') return null;
   for (const part of document.cookie.split(';')) {

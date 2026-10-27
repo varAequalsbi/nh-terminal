@@ -100,6 +100,12 @@ function AppContent() {
     <>
       {session && <Header onTabChange={handleTabChange} onLogout={handleLogout} />}
 
+      {import.meta.env.VITE_DEMO_PREVIEW === 'true' && (
+        <div className="client-preview-banner" role="status">
+          Client preview · sample data · changes stay in this browser
+        </div>
+      )}
+
       <main className="min-h-screen" style={{ background: '#050a10' }}>
         <Suspense
           fallback={<RouteSkeleton route={location.pathname.split('/')[1] || 'dashboard'} />}
