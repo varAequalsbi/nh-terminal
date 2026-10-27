@@ -4,8 +4,9 @@ import { readFile } from 'node:fs/promises';
 describe('community responsive regressions', () => {
   test('mobile chat exposes either the conversation list or active room', async () => {
     const css = await readFile('src/components/Community/community.css', 'utf8');
-    expect(css).toContain('.chat-view:not(.mobile-room-open)>aside');
-    expect(css).toContain('.chat-view.mobile-room-open>aside');
+    const compactCss = css.replace(/\s+/g, '');
+    expect(compactCss).toContain('.chat-view:not(.mobile-room-open)>aside');
+    expect(compactCss).toContain('.chat-view.mobile-room-open>aside');
     expect(css).toContain('.chat-mobile-header');
   });
 

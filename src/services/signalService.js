@@ -13,14 +13,7 @@ export const signalService = {
   },
 
   createSignal: async (signalData) => {
-    const formData = new FormData();
-    Object.keys(signalData).forEach((key) => {
-      formData.append(key, signalData[key]);
-    });
-
-    const response = await api.post('/signals', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const response = await api.post('/signals', signalData);
     return response.data;
   },
 
@@ -29,8 +22,8 @@ export const signalService = {
     return response.data;
   },
 
-  deleteSignal: async (id) => {
-    const response = await api.delete(`/signals/${id}`);
+  archiveSignal: async (id, reason) => {
+    const response = await api.post(`/signals/${id}/archive`, { reason });
     return response.data;
   },
 

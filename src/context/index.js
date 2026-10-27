@@ -159,9 +159,10 @@ const signalReducer = (state, action) => {
       return {
         ...state,
         signals: [action.payload, ...state.signals],
-        activeSignals: action.payload.status === 'active' 
-          ? [action.payload, ...state.activeSignals] 
-          : state.activeSignals,
+        activeSignals:
+          action.payload.status === 'active'
+            ? [action.payload, ...state.activeSignals]
+            : state.activeSignals,
       };
     case 'UPDATE_SIGNAL': {
       const updated = state.signals.map((s) =>

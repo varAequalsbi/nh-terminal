@@ -1,11 +1,16 @@
 type FeatureFlags = { liveMarket: boolean; liveCommunity: boolean };
 
 const requiredInProduction = (name: string, value: string | undefined) => {
-  if (import.meta.env.PROD && !value) throw new Error(`Missing required environment variable: ${name}`);
+  if (import.meta.env.PROD && !value)
+    throw new Error(`Missing required environment variable: ${name}`);
   return value || '';
 };
 
 const asBoolean = (value: string | undefined) => value === 'true';
+const asPositiveInteger = (value: string | undefined, fallback: number) => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+};
 
 export const env = Object.freeze({
   appEnv: import.meta.env.VITE_APP_ENV || import.meta.env.MODE,
@@ -14,6 +19,10 @@ export const env = Object.freeze({
   cdnUrl: import.meta.env.VITE_CDN_URL || '',
   analyticsUrl: import.meta.env.VITE_ANALYTICS_URL || '',
   maintenanceMode: asBoolean(import.meta.env.VITE_MAINTENANCE_MODE),
+  sessionRefreshInterval: Math.max(
+    60_000,
+    asPositiveInteger(import.meta.env.VITE_TOKEN_REFRESH_INTERVAL, 43_200_000)
+  ),
   marketProvider: import.meta.env.VITE_MARKET_PROVIDER || 'twelve-data',
   calendarProvider: import.meta.env.VITE_CALENDAR_PROVIDER || 'trading-economics',
   features: Object.freeze<FeatureFlags>({
@@ -22,4 +31,5 @@ export const env = Object.freeze({
   }),
 });
 
-export const cdnUrl = (path: string) => env.cdnUrl ? `${env.cdnUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}` : path;
+export const cdnUrl = (path: string) =>
+  env.cdnUrl ? `${env.cdnUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}` : path;

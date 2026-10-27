@@ -9,29 +9,42 @@ const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 30000;
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request Interceptor
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+const readBrowserCookie = (name) => {
+  if (typeof document === 'undefined') return null;
+  for (const part of document.cookie.split(';')) {
+    const [key, ...value] = part.trim().split('=');
+    if (key === name) return decodeURIComponent(value.join('='));
+  }
+  return null;
+};
+
+api.interceptors.request.use((config) => {
+  const method = String(config.method || 'get').toUpperCase();
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+    const csrfToken = readBrowserCookie('nh_csrf');
+    if (csrfToken) config.headers.set('X-CSRF-Token', csrfToken);
+  }
+  return config;
+});
 
 // Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
+    const requestPath = String(error.config?.url || '');
+    const isAuthAttempt = ['/auth/login', '/auth/register'].some((path) =>
+      requestPath.endsWith(path)
+    );
+    const isAuthPage = ['/login', '/signup'].includes(window.location.pathname);
+
+    if (error.response?.status === 401 && !isAuthAttempt && !isAuthPage) {
+      // The server owns the HTTP-only session cookie.
       clearSession();
       const intended = `${window.location.pathname}${window.location.search}`;
       window.location.assign(`/login?from=${encodeURIComponent(intended)}`);

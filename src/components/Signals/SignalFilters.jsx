@@ -27,7 +27,10 @@ export default function SignalFilters({ onFilterChange }) {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
         {/* Search */}
         <div className="md:col-span-1 relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"
+          />
           <input
             type="text"
             placeholder="Search XAUUSD..."
@@ -49,7 +52,10 @@ export default function SignalFilters({ onFilterChange }) {
             <option value="asia">Asia Session</option>
             <option value="newyork">New York Session</option>
           </select>
-          <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+          <ChevronDown
+            size={16}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
+          />
         </div>
 
         {/* Status */}
@@ -64,7 +70,10 @@ export default function SignalFilters({ onFilterChange }) {
             <option value="closed">Closed</option>
             <option value="pending">Pending</option>
           </select>
-          <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+          <ChevronDown
+            size={16}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
+          />
         </div>
 
         {/* Result */}
@@ -79,7 +88,10 @@ export default function SignalFilters({ onFilterChange }) {
             <option value="loss">Loss</option>
             <option value="breakeven">Breakeven</option>
           </select>
-          <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+          <ChevronDown
+            size={16}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
+          />
         </div>
 
         {/* Newest */}
@@ -94,7 +106,10 @@ export default function SignalFilters({ onFilterChange }) {
             <option value="week">This Week</option>
             <option value="month">This Month</option>
           </select>
-          <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+          <ChevronDown
+            size={16}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
+          />
         </div>
       </div>
     </div>

@@ -12,15 +12,11 @@ export const useAuth = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      authService.getCurrentUser()
-        .then(setUser)
-        .catch(setError)
-        .finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
-    }
+    authService
+      .getCurrentUser()
+      .then(setUser)
+      .catch(setError)
+      .finally(() => setIsLoading(false));
   }, []);
 
   const login = useCallback(async (email, password) => {
@@ -50,12 +46,13 @@ export const useSignals = (filters = {}) => {
   const [signals, setSignals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const filterKey = JSON.stringify(filters);
 
   useEffect(() => {
     const fetchSignals = async () => {
       try {
         setIsLoading(true);
-        const data = await signalService.getAllSignals(filters);
+        const data = await signalService.getAllSignals(JSON.parse(filterKey));
         setSignals(data.signals || []);
       } catch (err) {
         setError(err);
@@ -65,7 +62,7 @@ export const useSignals = (filters = {}) => {
     };
 
     fetchSignals();
-  }, [JSON.stringify(filters)]);
+  }, [filterKey]);
 
   const createSignal = useCallback(async (signalData) => {
     try {
@@ -187,6 +184,8 @@ export const useFetch = (fetchFn, dependencies = []) => {
     };
 
     fetch();
+    // Callers intentionally control when this generic fetch effect is repeated.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
   return { data, isLoading, error };
@@ -242,15 +241,18 @@ export const useLocalStorage = (key, initialValue) => {
     }
   });
 
-  const setValue = useCallback((value) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(error);
-    }
-  }, [key, storedValue]);
+  const setValue = useCallback(
+    (value) => {
+      try {
+        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        setStoredValue(valueToStore);
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [key, storedValue]
+  );
 
   return [storedValue, setValue];
 };

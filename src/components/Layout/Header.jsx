@@ -28,24 +28,45 @@ export default function Header({ onTabChange, onLogout }) {
     ['community', 'Community', Users],
     ['profile', 'Profile', User],
   ];
-  const go = (id) => { navigate(`/${id}`); onTabChange?.(id); setOpen(false); };
-  return <header className="site-header">
-    <div className="header-inner">
-      <button className="logo-button" onClick={() => go('dashboard')}><NHLogo /></button>
-      <nav className={open ? 'open' : ''} aria-label="Primary navigation">
-        {tabs.map(([id, label, Icon]) => (
+  const go = (id) => {
+    navigate(`/${id}`);
+    onTabChange?.(id);
+    setOpen(false);
+  };
+  return (
+    <header className="site-header">
+      <div className="header-inner">
+        <button className="logo-button" onClick={() => go('dashboard')}>
+          <NHLogo />
+        </button>
+        <nav className={open ? 'open' : ''} aria-label="Primary navigation">
+          {tabs.map(([id, label, Icon]) => (
+            <button
+              key={id}
+              className={current === id ? 'selected' : ''}
+              onClick={() => go(id)}
+              aria-current={current === id ? 'page' : undefined}
+            >
+              <Icon className="nav-icon" aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="header-tools">
           <button
-            key={id}
-            className={current === id ? 'selected' : ''}
-            onClick={() => go(id)}
-            aria-current={current === id ? 'page' : undefined}
+            className={`settings ${current === 'settings' ? 'active' : ''}`}
+            onClick={() => go('settings')}
           >
-            <Icon className="nav-icon" aria-hidden="true" />
-            <span>{label}</span>
+            <Settings size={20} /> SETTINGS
           </button>
-        ))}
-      </nav>
-      <div className="header-tools"><button className={`settings ${current === 'settings' ? 'active' : ''}`} onClick={() => go('settings')}><Settings size={20}/> SETTINGS</button><button onClick={onLogout} aria-label="Logout"><LogOut size={20}/></button><button className="menu" onClick={()=>setOpen(!open)} aria-label="Toggle navigation">{open?<X/>:<Menu/>}</button></div>
-    </div>
-  </header>;
+          <button onClick={onLogout} aria-label="Logout">
+            <LogOut size={20} />
+          </button>
+          <button className="menu" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
 }

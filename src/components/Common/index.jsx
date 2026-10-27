@@ -1,24 +1,26 @@
+import { Children } from 'react';
+
 // Button Component
-export function Button({ 
-  variant = 'primary', 
-  size = 'md', 
-  disabled = false, 
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  disabled = false,
   loading = false,
-  children, 
+  children,
   className = '',
-  ...props 
+  ...props
 }) {
   const variants = {
     primary: 'bg-color-gold text-bg-primary hover:bg-opacity-90',
     secondary: 'bg-bg-secondary text-text-primary hover:bg-bg-tertiary',
     outline: 'border border-border-color text-text-primary hover:bg-bg-secondary',
-    danger: 'bg-color-danger text-white hover:bg-opacity-90'
+    danger: 'bg-color-danger text-white hover:bg-opacity-90',
   };
 
   const sizes = {
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg'
+    lg: 'px-6 py-3 text-lg',
   };
 
   return (
@@ -41,7 +43,9 @@ export function Button({
 // Card Component
 export function Card({ children, className = '' }) {
   return (
-    <div className={`bg-bg-secondary border border-border-color rounded-radius-lg p-6 ${className}`}>
+    <div
+      className={`bg-bg-secondary border border-border-color rounded-radius-lg p-6 ${className}`}
+    >
       {children}
     </div>
   );
@@ -64,41 +68,34 @@ Card.Body = function CardBody({ children, className = '' }) {
 };
 
 Card.Footer = function CardFooter({ children, className = '' }) {
-  return (
-    <div className={`border-t border-border-color pt-4 mt-4 ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`border-t border-border-color pt-4 mt-4 ${className}`}>{children}</div>;
 };
 
 // Badge Component
-export function Badge({ 
-  variant = 'default', 
-  size = 'md', 
-  children, 
-  className = '' 
-}) {
+export function Badge({ variant = 'default', size = 'md', children, className = '' }) {
   const variants = {
     success: 'bg-color-success bg-opacity-20 text-color-success',
     danger: 'bg-color-danger bg-opacity-20 text-color-danger',
     warning: 'bg-color-warning bg-opacity-20 text-color-warning',
     info: 'bg-blue-500 bg-opacity-20 text-blue-300',
     default: 'bg-bg-tertiary text-text-secondary',
-    gold: 'bg-color-gold bg-opacity-20 text-color-gold'
+    gold: 'bg-color-gold bg-opacity-20 text-color-gold',
   };
 
   const sizes = {
     sm: 'px-2 py-1 text-xs',
     md: 'px-3 py-1.5 text-sm',
-    lg: 'px-4 py-2 text-base'
+    lg: 'px-4 py-2 text-base',
   };
 
   return (
-    <span className={`
+    <span
+      className={`
       ${variants[variant]} ${sizes[size]}
       rounded-full font-semibold inline-block
       ${className}
-    `}>
+    `}
+    >
       {children}
     </span>
   );
@@ -109,54 +106,53 @@ export function Tabs({ activeTab, onChange, children, className = '' }) {
   return (
     <div className={className}>
       <div className="border-b border-border-color flex gap-4 mb-6">
-        {React.Children.map(children, (child) =>
-          child && (
-            <button
-              key={child.props.value}
-              onClick={() => onChange(child.props.value)}
-              className={`
+        {Children.map(
+          children,
+          (child) =>
+            child && (
+              <button
+                key={child.props.value}
+                onClick={() => onChange(child.props.value)}
+                className={`
                 pb-3 px-2 font-semibold transition-colors whitespace-nowrap
-                ${activeTab === child.props.value
-                  ? 'text-color-gold border-b-2 border-color-gold'
-                  : 'text-text-secondary hover:text-text-primary'
+                ${
+                  activeTab === child.props.value
+                    ? 'text-color-gold border-b-2 border-color-gold'
+                    : 'text-text-secondary hover:text-text-primary'
                 }
               `}
-            >
-              {child.props.label}
-            </button>
-          )
+              >
+                {child.props.label}
+              </button>
+            )
         )}
       </div>
       <div className="tab-content">
-        {React.Children.map(children, (child) =>
-          child?.props.value === activeTab ? child : null
-        )}
+        {Children.map(children, (child) => (child?.props.value === activeTab ? child : null))}
       </div>
     </div>
   );
 }
 
-export function Tab({ children, label, value }) {
+export function Tab({ children, label: _label, value: _value }) {
   return <div>{children}</div>;
 }
 
 // Input Component
-export function Input({ 
-  type = 'text', 
-  placeholder = '', 
-  value, 
-  onChange, 
+export function Input({
+  type = 'text',
+  placeholder = '',
+  value,
+  onChange,
   error = '',
   label = '',
   className = '',
-  ...props 
+  ...props
 }) {
   return (
     <div className="mb-4">
       {label && (
-        <label className="block text-sm font-semibold text-text-primary mb-2">
-          {label}
-        </label>
+        <label className="block text-sm font-semibold text-text-primary mb-2">{label}</label>
       )}
       <input
         type={type}
@@ -185,29 +181,21 @@ export function Modal({ isOpen, title, children, onClose, footer }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50" 
-        onClick={onClose}
-      />
-      
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onClose} />
+
       {/* Modal */}
       <div className="relative bg-bg-secondary border border-border-color rounded-radius-lg p-6 max-w-md w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-text-primary">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="text-text-tertiary hover:text-text-primary"
-          >
+          <button onClick={onClose} className="text-text-tertiary hover:text-text-primary">
             ✕
           </button>
         </div>
-        
+
         <div className="mb-6">{children}</div>
-        
+
         {footer && (
-          <div className="border-t border-border-color pt-4 flex gap-2 justify-end">
-            {footer}
-          </div>
+          <div className="border-t border-border-color pt-4 flex gap-2 justify-end">{footer}</div>
         )}
       </div>
     </div>

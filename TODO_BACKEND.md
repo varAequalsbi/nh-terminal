@@ -7,38 +7,38 @@ release.
 ## Current development foundation (local prototype)
 
 - [x] Add a local Node HTTP API with a health endpoint and environment-configured port.
-- [x] Add local JSON persistence that can later be replaced by a database repository.
-- [x] Add a working dummy administrator login endpoint and authenticated frontend session flow.
-- [x] Add demo profile, preference, password-change, and logout endpoints for local and Vercel environments.
+- [x] Add initial local JSON persistence, then retire it after PostgreSQL integration.
+- [x] Add a database-backed administrator login and authenticated frontend session flow.
+- [x] Add PostgreSQL-backed profile, preference, password-change, and logout endpoints for local and Vercel environments.
 - [x] Add WIB-aware calendar period, country, impact, and search filtering with source and freshness metadata.
 - [x] Add demo forum comment/reply, chat read-state/delivery, and role-aware announcement detail endpoints.
 - [x] Add development endpoints for profiles, tiers, signals, market data, calendar, outlook, research, sentiment, forum posts, chat, announcements, courses, and live-session metadata.
 - [x] Add local create mutations for signals, forum posts, chat messages, and announcements.
 - [x] Add Vercel API routing and frontend SPA routing configuration.
 - [ ] Replace simulated/local market values with licensed production provider data.
-- [ ] Replace local JSON storage with a managed relational database and migrations.
-- [ ] Replace the development token/session model with secure server-managed authentication.
+- [x] Replace local JSON/in-memory storage with relational PostgreSQL repositories and migrations.
+- [x] Replace the development token/session model with hashed, revocable, server-managed sessions.
 
 > The completed items above describe development scaffolding only. They do not
 > satisfy the production architecture, security, licensing, or operations items below.
 
 ## 1. Architecture and environments
 
-- [ ] Choose and document the backend stack, runtime, framework, database, cache, job queue, object storage, and hosting platform.
-- [ ] Decide between a modular monolith and separate services; begin with the simplest architecture that meets the traffic and real-time requirements.
+- [x] Choose and document the backend stack, runtime, framework, database, cache, job queue, object storage, and hosting platform.
+- [x] Decide between a modular monolith and separate services; begin with the simplest architecture that meets the traffic and real-time requirements.
 - [ ] Create isolated local, development, staging, and production environments.
 - [ ] Use separate databases, storage buckets, credentials, API keys, and domains per environment.
-- [ ] Add validated environment configuration and fail startup when required values are absent.
+- [x] Add validated environment configuration and fail startup when required values are absent.
 - [ ] Store secrets in a managed secrets service, never in Git or frontend bundles.
-- [ ] Define API versioning, deprecation, error, pagination, timestamp, and idempotency conventions.
-- [ ] Publish an OpenAPI specification and keep it synchronized with implementation.
+- [ ] Define API versioning, deprecation, error, pagination, timestamp, and idempotency conventions (local validation errors, bounded offset cursors, timestamps, and request IDs are standardized; versioning and idempotency remain).
+- [x] Publish the current HTTP surface as an OpenAPI 3.1 document at `/openapi.json`, covered by contract tests.
 
 ## 2. Database design and migrations
 
-- [ ] Select a managed relational database such as PostgreSQL.
-- [ ] Use UUID/ULID identifiers, UTC timestamps, foreign keys, unique constraints, and appropriate indexes.
-- [ ] Create repeatable schema migrations and rollback procedures.
-- [ ] Add seed data for roles, reward tiers, configuration, and safe development fixtures.
+- [x] Select a managed relational database such as PostgreSQL.
+- [x] Use UUID/ULID identifiers, UTC timestamps, foreign keys, unique constraints, and appropriate indexes.
+- [x] Create repeatable schema migrations and rollback procedures.
+- [x] Add seed data for roles, reward tiers, configuration, and safe development fixtures.
 - [ ] Model users, credentials/identities, sessions, roles, permissions, profiles, broker/IB identifiers, and preferences.
 - [ ] Model reward tiers, tier requirements, lot ledger entries, progress snapshots, reward claims, and audit history.
 - [ ] Model market instruments, price snapshots/candles, sentiment, market sessions, calendar events, research, and outlooks.
@@ -54,18 +54,23 @@ release.
 
 ## 3. Authentication and authorization
 
-- [ ] Implement registration, login, logout, session refresh, email verification, password reset, and account recovery.
-- [ ] Use secure, HTTP-only, `Secure`, appropriately scoped `SameSite` cookies for browser sessions.
-- [ ] Hash passwords with Argon2id or another currently recommended password hashing algorithm.
-- [ ] Rotate refresh sessions/tokens and detect reuse.
-- [ ] Add session listing and revoke-other-sessions functionality.
+- [x] Implement PostgreSQL-backed local registration, login, and logout with HTTP-only sessions.
+- [x] Implement one-time local password-reset tokens with expiry and session revocation.
+- [x] Implement local email verification with expiring one-time tokens, resend throttling, Mailpit delivery, and recoverable delivery-failure handling.
+- [x] Implement rotating local session refresh with family tracking, family-wide replay revocation, and audit events.
+- [ ] Implement production email delivery/verification and account recovery support before production.
+- [x] Use secure, HTTP-only, appropriately scoped `SameSite` cookies for browser sessions (`Secure` outside explicit local/test mode).
+- [x] Hash passwords with a salted memory-hard scrypt password hash.
+- [x] Rotate session tokens and detect reuse of replaced tokens, revoking the affected session family.
+- [x] Add session listing and revoke-other-sessions functionality.
 - [ ] Add optional or mandatory MFA for administrators and sensitive actions.
-- [ ] Define roles such as member, expert, moderator, admin, and super-admin.
-- [ ] Define granular permissions rather than relying solely on role names.
-- [ ] Enforce authorization and resource ownership on every server operation.
-- [ ] Prevent user-controlled fields from assigning roles, tiers, lot totals, verified state, or administrative ownership.
-- [ ] Rate-limit login, registration, reset, verification, and recovery endpoints.
-- [ ] Record suspicious authentication and authorization events in audit logs.
+- [x] Define roles such as member, expert, moderator, admin, and super-admin.
+- [x] Define centralized granular permissions for forum writing/moderation, messaging, signal publishing/editing/deletion, and announcement publishing.
+- [x] Enforce authentication on every current data endpoint and role/ownership checks on every current mutation.
+- [x] Prevent user-controlled fields from assigning roles, tiers, lot totals, verified state, or administrative ownership.
+- [x] Rate-limit local login, registration, and password-reset endpoints using PostgreSQL counters.
+- [x] Record local login success/failure and registration events in audit logs.
+- [ ] Add distributed production rate limits and broader suspicious-event detection.
 
 ## 4. User, profile, broker, and rewards
 
@@ -90,6 +95,7 @@ release.
 - [ ] Ingest and cache quotes/candles without overwhelming provider rate limits.
 - [ ] Add stale-data detection, provider health checks, reconnects, and fallback behavior.
 - [ ] Select and integrate a licensed economic-calendar provider.
+- [ ] Confirm the client's manual, automatic, or hybrid calendar choice and role permissions in [the calendar decision](./docs/ECONOMIC_CALENDAR_DECISION.md).
 - [ ] Normalize calendar country, currency, impact, previous, forecast, actual, revisions, and source fields.
 - [ ] Correctly handle DST, holidays, rescheduled events, cancellations, and revised values.
 - [ ] Define and document sentiment calculation inputs and update frequency.
@@ -98,11 +104,11 @@ release.
 ## 6. Signals service
 
 - [ ] Implement list/detail/history endpoints with cursor pagination and filters.
-- [ ] Implement role-protected create, edit, publish, close, cancel, and delete/archive operations.
+- [x] Implement role-protected manual expert publishing, analysis edits, close, cancel, and soft archive operations with preserved history.
 - [x] Validate instrument fields, BUY/SELL direction, entry, stop loss, targets, and logical price relationships in the demo API.
-- [ ] Use a clear signal state machine such as draft, scheduled, published, running, target-hit, stopped, cancelled, and expired.
-- [x] Record demo signal status changes in append-only per-signal history arrays.
-- [ ] Calculate pip performance consistently by instrument precision and contract rules.
+- [x] Enforce a server-side signal transition map and prevent changes out of terminal states.
+- [x] Record signal changes in append-only database history with the acting user and reason.
+- [x] Calculate BUY/SELL pip performance from explicit execution prices and the instrument's stored pip size; monetary contract/P&L rules remain out of scope.
 - [ ] Update running signals from trusted market prices.
 - [ ] Make publish/close operations idempotent and transaction-safe.
 - [ ] Broadcast new signals and status/pip changes through a real-time channel.
@@ -126,11 +132,11 @@ release.
 
 ## 8. Community, chat, and moderation
 
-- [ ] Implement forum post, comment, reply, reaction, view, edit, delete, and report APIs.
+- [ ] Implement forum post, comment, reply, reaction, view, edit, delete, and report APIs (post/comment/reply creation plus owner-or-moderator edit and soft-delete are complete; reactions, views, and reports remain).
 - [ ] Define edit windows, soft deletion, archival, and moderator visibility rules.
 - [ ] Add spam, flood, duplicate-content, and abuse rate limits.
 - [ ] Sanitize user-generated text and reject unsafe markup/URLs.
-- [ ] Implement conversation membership and message authorization.
+- [x] Implement conversation membership and message read/send authorization, including consistent denial for non-member read-state updates.
 - [ ] Add message send, history, pagination, delivery/read receipt, unread count, and delete behavior.
 - [ ] Use WebSockets/SSE for real-time messages, comments, presence, typing, and live viewer counts.
 - [ ] Authenticate real-time connections and reauthorize channel subscriptions.
@@ -183,7 +189,7 @@ release.
 - [ ] Follow the current OWASP ASVS/API Security guidance.
 - [ ] Enforce TLS everywhere and redirect HTTP to HTTPS.
 - [ ] Configure strict CORS allowlists and reject untrusted origins.
-- [ ] Add CSRF protection for cookie-authenticated state-changing requests.
+- [x] Add double-submit CSRF protection for cookie-authenticated state-changing requests.
 - [ ] Add secure headers: CSP, HSTS, frame restrictions, MIME sniffing protection, and referrer policy.
 - [ ] Prevent SQL/NoSQL injection through parameterized queries and safe ORM usage.
 - [ ] Prevent XSS by sanitizing rich text and avoiding unsafe HTML rendering.
@@ -210,7 +216,7 @@ release.
 
 ## 14. Observability and operations
 
-- [ ] Add structured logs with request IDs and environment/service metadata.
+- [x] Add structured JSON request logs with validated request IDs, duration, status, environment, and service metadata.
 - [ ] Add metrics for latency, error rate, saturation, jobs, WebSockets, provider freshness, and business-critical workflows.
 - [ ] Add distributed tracing for API-provider-job chains.
 - [ ] Integrate error monitoring with source maps and release identifiers.
@@ -225,7 +231,8 @@ release.
 - [ ] Enable automated encrypted database backups and point-in-time recovery.
 - [ ] Define recovery point and recovery time objectives.
 - [ ] Store backups separately from the primary environment/account where feasible.
-- [ ] Regularly test restoration rather than assuming backups work.
+- [x] Add and execute a repeatable local restore rehearsal while preserving the isolated test database.
+- [ ] Schedule and regularly test restoration in the selected managed staging environment.
 - [ ] Back up critical configuration and object metadata.
 - [ ] Document disaster recovery, regional outage, and provider migration procedures.
 - [ ] Test rollback for application and database deployments.
@@ -234,7 +241,8 @@ release.
 
 - [ ] Containerize or otherwise make backend builds reproducible.
 - [ ] Pin runtime and dependency versions and generate locked dependency manifests.
-- [ ] Add CI gates for formatting, linting, types, unit/integration tests, migrations, security scans, and build.
+- [x] Add a baseline CI quality gate with locked installation, type checking, isolated PostgreSQL migrations/integration tests, Chromium journeys, and a production build.
+- [x] Add CI gates for formatting, zero-warning linting, types, unit/integration tests, migrations, production dependency auditing, and build.
 - [ ] Use short-lived cloud credentials or workload identity in CI.
 - [ ] Deploy automatically to staging and require controlled approval for production.
 - [ ] Run migrations using a safe, observable deployment step.
@@ -249,13 +257,15 @@ release.
 ## 17. Testing and launch validation
 
 - [ ] Add unit tests for permissions, signal state transitions, pip calculations, tier calculations, and validation.
-- [ ] Add integration tests against a real test database and storage emulator/service.
+- [x] Add focused unit/integration coverage for signal transitions, BUY/SELL pip calculations, request validation, email verification, request IDs, and session security.
+- [x] Add integration tests against an isolated real PostgreSQL test database; object-storage testing remains deferred until uploads are implemented.
 - [ ] Add contract tests for market, broker, streaming, email, and other external providers.
 - [ ] Add API end-to-end tests for all critical user and admin workflows.
+- [x] Add isolated Chromium journeys for login/logout, email-verified signup, role-gated controls, primary navigation, signal publishing, forum publishing, and conversation access; deeper filter/profile/announcement mutations remain above.
 - [ ] Add WebSocket tests for authentication, reconnect, ordering, and missed messages.
 - [ ] Add concurrency tests for reactions, unread counts, reward claims, and signal publication.
 - [ ] Add load tests for market fan-out, signals, chat, calendar, and live-session spikes.
-- [ ] Test backup restoration and disaster recovery in a non-production environment.
+- [x] Test PostgreSQL backup restoration and data-integrity checks in the local non-production environment; full managed disaster recovery remains pending.
 - [ ] Seed staging with synthetic—not copied production—data.
 - [ ] Complete an operational launch checklist and rollback rehearsal.
 

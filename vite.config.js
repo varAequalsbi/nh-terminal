@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -11,8 +11,9 @@ export default defineConfig({
   },
   oxc: false,
   server: {
-    port: 5173,
-    strictPort: false,
+    host: '127.0.0.1',
+    port: 5174,
+    strictPort: true,
     open: true,
     proxy: {
       '/api': {
@@ -30,7 +31,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react')) {
-            return 'vendor'
+            return 'vendor';
           }
         },
       },
@@ -39,4 +40,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'axios', 'zustand'],
   },
-})
+  test: {
+    exclude: ['tests/e2e/**', '**/node_modules/**', '**/dist/**'],
+  },
+});
