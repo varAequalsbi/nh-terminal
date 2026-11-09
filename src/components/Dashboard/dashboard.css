@@ -228,6 +228,7 @@
   color: inherit;
   text-align: left;
   font: inherit;
+  font-size: 14px;
   cursor: pointer;
 }
 .calendar-row:hover,
@@ -243,8 +244,13 @@
   background: #bbc0c4;
 }
 
-.event-time {
-  width: 104px;
+.calendar-row .event-time {
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  line-height: 1;
+  font-size: 12px;
+  width: 112px;
   height: 35px;
   border: 1px solid #c2c5c8;
   border-radius: 20px;
@@ -663,4 +669,17 @@
 
 .live-chart-line {
   transition: d 0.45s ease;
+}
+
+@media (max-width: 650px) {
+  .calendar-row .event-time {
+    width: 84px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 380px) {
+  .calendar-row .event-time {
+    width: 78px;
+    font-size: 9px;
+  }
 }
