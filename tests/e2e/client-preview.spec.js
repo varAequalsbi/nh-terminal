@@ -12,7 +12,7 @@ test('client can explore the preview without a backend database', async ({ page 
   });
   await page.goto('/login');
   await expect(page.locator('.client-preview-banner')).toContainText('Client preview');
-  await page.getByRole('button', { name: 'Use Demo Account' }).click();
+  await page.getByRole('button', { name: 'Admin', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByText('Illustrative sample sentiment')).toBeVisible();
 
@@ -36,3 +36,32 @@ test('client can explore the preview without a backend database', async ({ page 
   await expect(page.getByRole('heading', { name: 'COMMUNITY', exact: true })).toBeVisible();
   expect(backendRequests).toEqual([]);
 });
+
+for (const [role, label] of [
+  ['member', 'Member'],
+  ['expert', 'Expert'],
+  ['moderator', 'Moderator'],
+  ['admin', 'Admin'],
+  ['super-admin', 'Super Admin'],
+]) {
+  test(`preview role ${role} persists and shows appropriate signal controls`, async ({ page }) => {
+    await page.goto('/login');
+    await page.getByRole('button', { name: label, exact: true }).click();
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await page.reload();
+    await expect(page).toHaveURL(/\/dashboard$/);
+    const session = await page.evaluate(() => JSON.parse(localStorage.getItem('nh.session')));
+    expect(session.user.role).toBe(role);
+    await page.getByRole('button', { name: 'Signal', exact: true }).click();
+    await page.getByRole('button', { name: 'TEAM EXPERT' }).click();
+    const publish = page.getByRole('button', { name: /add signal/i });
+    if (['expert', 'admin', 'super-admin'].includes(role)) await expect(publish).toBeVisible();
+    else await expect(publish).toHaveCount(0);
+    page.once('dialog', (dialog) => dialog.accept());
+    await page.getByRole('button', { name: 'Logout', exact: true }).click();
+    await expect(page).toHaveURL(/\/login$/);
+    await page.getByRole('button', { name: 'Member', exact: true }).click();
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.locator('.client-preview-banner')).toContainText('Role: member');
+  });
+}

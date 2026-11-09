@@ -2,7 +2,7 @@
 
 Vercel builds non-main branches as Preview deployments. The Preview environment
 sets `VITE_DEMO_PREVIEW=true`, which switches browser API calls to sample data.
-Visitors use **Use Demo Account** on the sign-in page. Any changes they make are
+Visitors choose **Member**, **Expert**, **Moderator**, **Admin**, or **Super Admin** on the sign-in page. These temporary role buttons exist only in preview mode and simulate each role's interface; they do not sign into real accounts. Log out to switch roles. Any changes they make are
 kept in that browser tab's session storage and are not shared with other
 visitors. This mode does not create accounts or use PostgreSQL, paid market
 data, Stream, or the live website's backend.

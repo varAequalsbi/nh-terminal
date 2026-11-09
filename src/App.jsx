@@ -103,6 +103,7 @@ function AppContent() {
       {import.meta.env.VITE_DEMO_PREVIEW === 'true' && (
         <div className="client-preview-banner" role="status">
           Client preview · sample data · changes stay in this browser
+          {session?.user?.role && ` | Role: ${session.user.role.replaceAll('-', ' ')}`}
         </div>
       )}
 

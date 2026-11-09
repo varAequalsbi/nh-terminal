@@ -1,7 +1,7 @@
 import seed from '../../server/data/db.json';
 
 const storageKey = 'nh.client-preview.v1';
-const demoEmail = 'admin@nhterminal.local';
+const demoRoles = ['member', 'expert', 'moderator', 'admin', 'super-admin'];
 const demoPassword = 'NHAdmin1234!';
 
 const readState = () => {
@@ -62,10 +62,19 @@ export async function previewAdapter(config) {
   };
 
   if (path === '/auth/login' && method === 'POST') {
-    if (input.email !== demoEmail || input.password !== demoPassword)
+    const role = demoRoles.find((item) => input.email === `${item}@nhterminal.local`);
+    if (!role || input.password !== demoPassword)
       return reject(config, 401, 'Use the Demo Account button for this client preview.');
     sessionStorage.setItem('nh.client-preview.signed-in', 'true');
-    return reply({ user: state.profile });
+    state.profile = {
+      ...structuredClone(seed.profile),
+      id: role === 'admin' ? seed.profile.id : `preview-${role}`,
+      name: `Demo ${role === 'super-admin' ? 'Super Admin' : role[0].toUpperCase() + role.slice(1)}`,
+      username: `demo-${role}`,
+      email: input.email,
+      role,
+    };
+    return save({ user: state.profile });
   }
   if (path === '/auth/logout' && method === 'POST') {
     sessionStorage.removeItem('nh.client-preview.signed-in');

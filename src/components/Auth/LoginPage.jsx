@@ -23,7 +23,7 @@ export default function LoginPage({ onLoginSuccess }) {
     setErrors({ ...errors, [e.target.name]: '' });
   };
   const authenticate = async (credentials) => {
-    if (turnstileSiteKey && !botToken) {
+    if (!isClientPreview && turnstileSiteKey && !botToken) {
       setErrors({ form: 'Complete the bot verification first.' });
       return;
     }
@@ -57,9 +57,10 @@ export default function LoginPage({ onLoginSuccess }) {
     }
     await authenticate(formData);
   };
-  const useDemoAccount = () => {
-    setFormData(demoAccount);
-    authenticate(demoAccount);
+  const handleDemoLogin = (role = 'admin') => {
+    const credentials = { ...demoAccount, email: `${role}@nhterminal.local` };
+    setFormData(credentials);
+    authenticate(credentials);
   };
   return (
     <main className="login-page">
@@ -112,24 +113,55 @@ export default function LoginPage({ onLoginSuccess }) {
               Forgot Password?
             </Link>
           )}
-          <Turnstile action="login" onToken={setBotToken} resetKey={botReset} />
+          {!isClientPreview && (
+            <Turnstile action="login" onToken={setBotToken} resetKey={botReset} />
+          )}
           <button className="login-submit" disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Log In'}
           </button>
-          <button
-            type="button"
-            className="demo-login"
-            disabled={isLoading}
-            onClick={useDemoAccount}
-          >
-            {isLoading ? 'Signing in...' : 'Use Demo Account'}
-          </button>
+          {!isClientPreview && (
+            <button
+              type="button"
+              className="demo-login"
+              disabled={isLoading}
+              onClick={() => handleDemoLogin()}
+            >
+              {isLoading ? 'Signing in...' : 'Use Demo Account'}
+            </button>
+          )}
         </form>
-        <div className="demo-credentials">
-          <b>Demo administrator</b>
-          <span>{demoAccount.email}</span>
-          <span>{demoAccount.password}</span>
-        </div>
+        {isClientPreview ? (
+          <section className="preview-role-picker" aria-label="Preview roles">
+            <h2>Explore as a role</h2>
+            <p>Temporary demo access. Choose a role to preview its available controls.</p>
+            <div className="preview-role-buttons">
+              {[
+                ['member', 'Member'],
+                ['expert', 'Expert'],
+                ['moderator', 'Moderator'],
+                ['admin', 'Admin'],
+                ['super-admin', 'Super Admin'],
+              ].map(([role, label]) => (
+                <button
+                  key={role}
+                  type="button"
+                  className="demo-login"
+                  disabled={isLoading}
+                  onClick={() => handleDemoLogin(role)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <p>Log out to return here and switch roles. Changes stay in this browser tab.</p>
+          </section>
+        ) : (
+          <div className="demo-credentials">
+            <b>Demo administrator</b>
+            <span>{demoAccount.email}</span>
+            <span>{demoAccount.password}</span>
+          </div>
+        )}
         {!isClientPreview && (
           <div className="signup-copy">
             Don&apos;t Have Account? <Link to="/signup">Sign Up</Link>

@@ -158,3 +158,39 @@
   display: block;
   margin-top: 8px;
 }
+
+.preview-role-picker {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #354052;
+}
+.preview-role-picker h2 {
+  color: #d8ba62;
+  font-size: 16px;
+}
+.preview-role-picker p {
+  color: #b8bec8;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+.preview-role-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+.preview-role-buttons button:last-child {
+  grid-column: 1 / -1;
+}
+.preview-role-buttons button:hover {
+  background: rgba(196, 154, 34, 0.12);
+}
+.preview-role-buttons button:focus-visible {
+  outline: 2px solid #d8ba62;
+  outline-offset: 3px;
+}
+.preview-role-buttons button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
