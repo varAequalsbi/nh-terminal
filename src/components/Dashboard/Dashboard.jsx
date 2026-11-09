@@ -38,9 +38,18 @@ function SectionTitle({ icon: Icon, title, subtitle, action = true, href }) {
 function CalendarRow({ item }) {
   const navigate = useNavigate();
   return (
-    <button className="calendar-row" onClick={() => navigate(`/market?tab=calendar&event=${encodeURIComponent(item.id)}`)}>
+    <button
+      className="calendar-row"
+      onClick={() => navigate(`/market?tab=calendar&event=${encodeURIComponent(item.id)}`)}
+    >
       <span className="event-time">
-        {new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(item.date))} WIB
+        {new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Jakarta',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        }).format(new Date(item.date))}{' '}
+        WIB
       </span>
       <i />
       <b className={item.impact}>{item.impact.toUpperCase()}</b>
@@ -113,11 +122,15 @@ export default function Dashboard() {
     queryFn: () => dataService.market.sentiment('XAUUSD'),
   });
   const all = signals.data?.items || [];
-  const active = all.filter((x) => x.status === 'running');
-  const completed = all.filter((x) => x.status === 'completed');
+  const published = all.filter((x) => !x.demo);
+  const active = published.filter((x) => x.status === 'running');
+  const completed = published.filter((x) => x.status === 'completed');
   const wins = completed.filter((x) => x.result === 'win').length;
-  const net = all.reduce((sum, x) => sum + (x.pips || 0), 0);
-  const latest = all[0];
+  const net = published.reduce((sum, x) => sum + (x.pips || 0), 0);
+  const latest = published[0];
+  const recentAnnouncements = (announcements.data?.items || [])
+    .filter((item) => Date.now() - new Date(item.publishedAt).getTime() <= 30 * 24 * 60 * 60 * 1000)
+    .slice(0, 2);
   const loading = [signals, calendar, announcements, sentiment].some((x) => x.isLoading);
   const error = [signals, calendar, announcements, sentiment].find((x) => x.error)?.error;
   return (
@@ -142,22 +155,32 @@ export default function Dashboard() {
             <StatCard icon={DollarSign} value={`${net >= 0 ? '+' : ''}${net}`} label="NET PIPS" />
           </div>
         </section>
+        {all.some((item) => item.demo) && (
+          <p className="dashboard-data-note">
+            Performance totals exclude historical sample signals.
+          </p>
+        )}
         <section className="calendar-section">
           <SectionTitle
             icon={Calendar}
             title="ECONOMIC CALENDAR"
             href="/market?tab=calendar"
-            subtitle="Upcoming Events"
+            subtitle={calendar.data?.demoData ? 'Sample calendar entries' : 'Upcoming Events'}
           />
+          {calendar.data?.demoData && (
+            <p className="dashboard-data-note">
+              The economic calendar contains sample data, not live releases.
+            </p>
+          )}
           <div className="calendar-list">
             {(calendar.data?.items || []).slice(0, 3).map((item) => (
               <CalendarRow item={item} key={item.id} />
             ))}
           </div>
         </section>
-        {latest && (
-          <section className="latest-section">
-            <SectionTitle icon={Crosshair} title="LATEST SIGNAL" href="/signal" />
+        <section className="latest-section">
+          <SectionTitle icon={Crosshair} title="LATEST SIGNAL" href="/signal" />
+          {latest ? (
             <div className="latest-card">
               <div className="latest-meta">
                 <b>{latest.direction}</b>
@@ -174,14 +197,22 @@ export default function Dashboard() {
                 <Metric title="TP 2" value={latest.targets?.[1]} tone="green" />
               </div>
             </div>
-          </section>
-        )}
+          ) : (
+            <p className="dashboard-data-note">
+              No real signal has been published yet. Sample signals are available on the Signals
+              page.
+            </p>
+          )}
+        </section>
         <section className="news-sentiment">
           <div className="announcements">
             <SectionTitle icon={Bell} title="ANNOUNCEMENT" href="/community?tab=info" />
-            {(announcements.data?.items || []).slice(0, 2).map((item) => (
+            {recentAnnouncements.map((item) => (
               <Announcement item={item} key={item.id} />
             ))}
+            {!recentAnnouncements.length && (
+              <p className="dashboard-data-note">No recent announcements.</p>
+            )}
           </div>
           <div className="sentiment">
             <SectionTitle icon={ArrowRight} title="MARKET SENTIMENT" action={false} />

@@ -2,25 +2,28 @@
 import api from './api';
 
 export const authService = {
-  login: async (email, password) => {
-    const response = await api.post('/auth/login', { email, password });
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-    }
+  login: async (email, password, turnstileToken) => {
+    const response = await api.post('/auth/login', { email, password, turnstileToken });
     return response.data;
   },
 
   signup: async (userData) => {
     const response = await api.post('/auth/register', userData);
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-    }
+    return response.data;
+  },
+
+  verifyEmail: async (token) => {
+    const response = await api.post('/auth/verify-email', { token });
+    return response.data;
+  },
+
+  resendVerification: async (email, turnstileToken) => {
+    const response = await api.post('/auth/resend-verification', { email, turnstileToken });
     return response.data;
   },
 
   logout: async () => {
-    try { await api.post('/auth/logout'); }
-    finally { localStorage.removeItem('authToken'); }
+    await api.post('/auth/logout');
   },
 
   getCurrentUser: async () => {
@@ -30,19 +33,26 @@ export const authService = {
 
   refreshToken: async () => {
     const response = await api.post('/auth/refresh');
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-    }
     return response.data;
   },
 
-  forgotPassword: async (email) => {
-    const response = await api.post('/auth/forgot-password', { email });
+  forgotPassword: async (email, turnstileToken) => {
+    const response = await api.post('/auth/forgot-password', { email, turnstileToken });
     return response.data;
   },
 
   resetPassword: async (token, newPassword) => {
     const response = await api.post('/auth/reset-password', { token, newPassword });
+    return response.data;
+  },
+
+  getSessions: async () => {
+    const response = await api.get('/auth/sessions');
+    return response.data;
+  },
+
+  revokeOtherSessions: async () => {
+    const response = await api.delete('/auth/sessions/others');
     return response.data;
   },
 

@@ -131,11 +131,19 @@ export default function ProfilePage() {
               </div>
               <small>{(user.nextTierLots - user.lots).toLocaleString()} Lot remaining</small>
               <nav>
-                <button onClick={() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })}>
+                <button
+                  onClick={() =>
+                    document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                >
                   <Award />
                   Reward Program
                 </button>
-                <button onClick={() => document.getElementById('education')?.scrollIntoView({ behavior: 'smooth' })}>
+                <button
+                  onClick={() =>
+                    document.getElementById('education')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                >
                   <BookOpen />
                   Education
                 </button>

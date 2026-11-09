@@ -72,7 +72,7 @@ export const validateEmail = (email) => {
 };
 
 export const validatePassword = (password) => {
-  return password.length >= 8;
+  return password.length >= 12;
 };
 
 export const validateUsername = (username) => {
@@ -100,7 +100,7 @@ export const validateForm = (formData, rules) => {
     } else if (rule.type === 'email' && value && !validateEmail(value)) {
       errors[field] = 'Invalid email format';
     } else if (rule.type === 'password' && value && !validatePassword(value)) {
-      errors[field] = 'Password must be at least 8 characters';
+      errors[field] = 'Password must be at least 12 characters';
     } else if (rule.minLength && value && value.length < rule.minLength) {
       errors[field] = `${rule.label} must be at least ${rule.minLength} characters`;
     } else if (rule.maxLength && value && value.length > rule.maxLength) {
@@ -185,13 +185,7 @@ export const TIMEFRAMES = [
   { value: '1w', label: '1 Week' },
 ];
 
-export const CURRENCY_PAIRS = [
-  'XAUUSD',
-  'EURUSD',
-  'GBPUSD',
-  'USDJPY',
-  'BTCUSD',
-];
+export const CURRENCY_PAIRS = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'BTCUSD'];
 
 export const API_ENDPOINTS = {
   AUTH: '/auth',

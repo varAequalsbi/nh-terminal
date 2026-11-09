@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Upload } from 'lucide-react';
 
-export default function SignalForm({ onClose, onSubmit }) {
+export default function SignalForm({ onSubmit }) {
   const [signalType, setSignalType] = useState('BUY');
   const [formData, setFormData] = useState({
     entry: '',
@@ -16,17 +16,17 @@ export default function SignalForm({ onClose, onSubmit }) {
   const [errors, setErrors] = useState({});
 
   const handleChange = (key, value) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({ ...prev, [key]: value }));
     // Clear error when user starts typing
     if (errors[key]) {
-      setErrors(prev => ({ ...prev, [key]: null }));
+      setErrors((prev) => ({ ...prev, [key]: null }));
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({ ...prev, chart: file }));
+      setFormData((prev) => ({ ...prev, chart: file }));
     }
   };
 
@@ -35,7 +35,7 @@ export default function SignalForm({ onClose, onSubmit }) {
     if (!formData.entry) newErrors.entry = 'Entry price is required';
     if (!formData.stopLoss) newErrors.stopLoss = 'Stop loss is required';
     if (!formData.tp1) newErrors.tp1 = 'TP 1 is required';
-    
+
     // Numeric validation
     if (formData.entry && isNaN(parseFloat(formData.entry))) {
       newErrors.entry = 'Must be a valid number';
@@ -174,12 +174,7 @@ export default function SignalForm({ onClose, onSubmit }) {
           <div>
             <label className="text-sm text-text-secondary mb-2 block">Upload Chart</label>
             <label className="flex items-center justify-center w-full h-24 bg-bg-tertiary border-2 border-dashed border-border-color cursor-pointer hover:border-cyan-500 transition-colors">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
+              <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
               <div className="text-center">
                 <Upload size={24} className="text-color-gold mx-auto mb-1" />
                 {formData.chart && (

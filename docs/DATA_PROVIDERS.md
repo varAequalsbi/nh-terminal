@@ -22,5 +22,6 @@ Suggested proxy endpoints:
 
 ## Current adapters
 
-- Local development runs `server/index.js` on port 3000 and persists mutations to `server/data/db.json` through `server/repository.js`.
-- Vercel exposes the same read/write contract through `api/[...path].js`, so deployed pages display API data instead of component constants. Its seed adapter is intentionally non-durable across serverless instances. Replace that adapter with the production database before accepting production writes.
+- Local development runs `server/index.js` on port 3000 and persists application state in local PostgreSQL through the shared relational repository.
+- Vercel exposes the same contract through `api/[...path].js` and requires a server-only `DATABASE_URL`. No JSON or process-memory write fallback remains.
+- Quote, candle, sentiment, and calendar records are still local fixtures. Keep live-market feature flags disabled until licensed provider adapters and attribution requirements are complete.

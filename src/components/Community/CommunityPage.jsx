@@ -1,49 +1,616 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { AlertCircle, ArrowLeft, Calendar, Check, CheckCheck, CornerUpLeft, Eye, Heart, Image, MessageSquare, Monitor, Plus, Send, User, Users, Video, X } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowLeft,
+  Calendar,
+  Check,
+  CheckCheck,
+  CornerUpLeft,
+  Eye,
+  Heart,
+  Image,
+  MessageSquare,
+  Monitor,
+  Plus,
+  Send,
+  User,
+  Users,
+  Video,
+  X,
+} from 'lucide-react';
 import { dataService, queryKeys } from '../../services/dataService';
 import { AsyncBoundary } from '../Common/AsyncStates';
 import { readSession } from '../../auth/session';
 import './community.css';
 
-const tabs = [['forum', 'Forum', Users], ['live', 'Live Trade', Monitor], ['chat', 'Chat', MessageSquare], ['info', 'Info', AlertCircle]];
-const apiError = (error) => error.response?.data?.message || error.message || 'Unable to complete this action.';
-function Header({ active, setActive }) { return <section className="community-header"><h1>COMMUNITY</h1><nav>{tabs.map(([id, label, Icon]) => <button className={active === id ? 'active' : ''} onClick={() => setActive(id)} key={id}><Icon />{label}</button>)}</nav></section>; }
-function Avatar({ gold = false }) { return <span className={`community-avatar ${gold ? 'gold' : ''}`}><User /></span>; }
-function InlineComposer({ placeholder, onSend, pending, onCancel }) { const [value, setValue] = useState(''); const send = () => { if (!value.trim() || pending) return; onSend(value.trim()); setValue(''); }; return <div className="inline-composer"><input maxLength="300" placeholder={placeholder} value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') send(); }} /><button disabled={pending || !value.trim()} onClick={send}><Send /></button>{onCancel && <button onClick={onCancel}><X /></button>}</div>; }
+const tabs = [
+  ['forum', 'Forum', Users],
+  ['live', 'Live Trade', Monitor],
+  ['chat', 'Chat', MessageSquare],
+  ['info', 'Info', AlertCircle],
+];
+const apiError = (error) =>
+  error.response?.data?.message || error.message || 'Unable to complete this action.';
+function Header({ active, setActive }) {
+  return (
+    <section className="community-header">
+      <h1>COMMUNITY</h1>
+      <nav>
+        {tabs.map(([id, label, Icon]) => (
+          <button className={active === id ? 'active' : ''} onClick={() => setActive(id)} key={id}>
+            <Icon />
+            {label}
+          </button>
+        ))}
+      </nav>
+    </section>
+  );
+}
+function Avatar({ gold = false }) {
+  return (
+    <span className={`community-avatar ${gold ? 'gold' : ''}`}>
+      <User />
+    </span>
+  );
+}
+function InlineComposer({ placeholder, onSend, pending, onCancel }) {
+  const [value, setValue] = useState('');
+  const send = () => {
+    if (!value.trim() || pending) return;
+    onSend(value.trim());
+    setValue('');
+  };
+  return (
+    <div className="inline-composer">
+      <input
+        maxLength="300"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') send();
+        }}
+      />
+      <button disabled={pending || !value.trim()} onClick={send}>
+        <Send />
+      </button>
+      {onCancel && (
+        <button onClick={onCancel}>
+          <X />
+        </button>
+      )}
+    </div>
+  );
+}
 
 function PostThread({ post, onCountChange }) {
-  const qc = useQueryClient(); const [replyTo, setReplyTo] = useState(null);
-  const comments = useQuery({ queryKey: ['post-comments', post.id], queryFn: () => dataService.community.comments(post.id) });
-  const create = useMutation({ mutationFn: ({ body, parentId }) => dataService.community.createComment(post.id, { body, parentId }), onSuccess: () => { qc.invalidateQueries({ queryKey: ['post-comments', post.id] }); qc.invalidateQueries({ queryKey: ['posts'] }); onCountChange?.(); setReplyTo(null); } });
-  const items = comments.data?.items || []; const roots = items.filter((item) => !item.parentId);
-  return <div className="post-thread"><AsyncBoundary isLoading={comments.isLoading} error={comments.error} data={items} onRetry={comments.refetch}><div className="thread-list">{roots.map((comment) => <div className="thread-comment" key={comment.id}><div><Avatar gold={comment.role === 'admin'} /><span><b>{comment.author}</b><small>{new Date(comment.createdAt).toLocaleString()}</small></span></div><p>{comment.body}</p><button className="reply-action" onClick={() => setReplyTo(comment.id)}><CornerUpLeft />Reply</button>{items.filter((reply) => reply.parentId === comment.id).map((reply) => <div className="thread-reply" key={reply.id}><b>{reply.author}</b><p>{reply.body}</p><small>{new Date(reply.createdAt).toLocaleString()}</small></div>)}{replyTo === comment.id && <InlineComposer placeholder={`Reply to ${comment.author}…`} pending={create.isPending} onCancel={() => setReplyTo(null)} onSend={(body) => create.mutate({ body, parentId: comment.id })} />}</div>)}</div></AsyncBoundary><InlineComposer placeholder="Write a comment…" pending={create.isPending} onSend={(body) => create.mutate({ body, parentId: null })} /></div>;
+  const qc = useQueryClient();
+  const [replyTo, setReplyTo] = useState(null);
+  const comments = useQuery({
+    queryKey: ['post-comments', post.id],
+    queryFn: () => dataService.community.comments(post.id),
+  });
+  const create = useMutation({
+    mutationFn: ({ body, parentId }) =>
+      dataService.community.createComment(post.id, { body, parentId }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['post-comments', post.id] });
+      qc.invalidateQueries({ queryKey: ['posts'] });
+      onCountChange?.();
+      setReplyTo(null);
+    },
+  });
+  const items = comments.data?.items || [];
+  const roots = items.filter((item) => !item.parentId);
+  return (
+    <div className="post-thread">
+      <AsyncBoundary
+        isLoading={comments.isLoading}
+        error={comments.error}
+        data={items}
+        onRetry={comments.refetch}
+      >
+        <div className="thread-list">
+          {roots.map((comment) => (
+            <div className="thread-comment" key={comment.id}>
+              <div>
+                <Avatar gold={comment.role === 'admin'} />
+                <span>
+                  <b>{comment.author}</b>
+                  <small>{new Date(comment.createdAt).toLocaleString()}</small>
+                </span>
+              </div>
+              <p>{comment.body}</p>
+              <button className="reply-action" onClick={() => setReplyTo(comment.id)}>
+                <CornerUpLeft />
+                Reply
+              </button>
+              {items
+                .filter((reply) => reply.parentId === comment.id)
+                .map((reply) => (
+                  <div className="thread-reply" key={reply.id}>
+                    <b>{reply.author}</b>
+                    <p>{reply.body}</p>
+                    <small>{new Date(reply.createdAt).toLocaleString()}</small>
+                  </div>
+                ))}
+              {replyTo === comment.id && (
+                <InlineComposer
+                  placeholder={`Reply to ${comment.author}…`}
+                  pending={create.isPending}
+                  onCancel={() => setReplyTo(null)}
+                  onSend={(body) => create.mutate({ body, parentId: comment.id })}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </AsyncBoundary>
+      <InlineComposer
+        placeholder="Write a comment…"
+        pending={create.isPending}
+        onSend={(body) => create.mutate({ body, parentId: null })}
+      />
+    </div>
+  );
 }
-function MemberCard({ post }) { const [liked, setLiked] = useState(false); const [open, setOpen] = useState(false); return <article className={`member-card ${open ? 'thread-open' : ''}`}><div><Avatar /><h3>{post.author}</h3>{post.tier && <b className={post.tier.toLowerCase()}>{post.tier}</b>}</div><p>{post.body}</p><small><button className="bare-action" onClick={() => setLiked(!liked)}><Heart fill={liked ? '#d90008' : 'none'} />{post.reactions + (liked ? 1 : 0)}</button><button className="bare-action" onClick={() => setOpen(!open)} aria-expanded={open}><MessageSquare />{post.comments} {open ? 'Hide' : 'Comments'}</button></small>{open && <PostThread post={post} />}</article>; }
-function Forum() { const [text, setText] = useState(() => localStorage.getItem('nh.forumDraft') || ''); const qc = useQueryClient(); useEffect(() => localStorage.setItem('nh.forumDraft', text), [text]); const query = useQuery({ queryKey: queryKeys.posts(), queryFn: () => dataService.community.posts() }); const create = useMutation({ mutationFn: dataService.community.createPost, onSuccess: () => { setText(''); localStorage.removeItem('nh.forumDraft'); qc.invalidateQueries({ queryKey: ['posts'] }); } }); const posts = query.data?.items || []; return <section className="forum-view"><div className="forum-main"><h2><Calendar /> COMMUNITY FORUM</h2><div className="forum-composer"><textarea maxLength="500" placeholder="Write in the forum..." value={text} onChange={(e) => setText(e.target.value)} /><div><span className="composer-count">{text.length}/500</span><label className="file-action"><Image />Photo<input hidden type="file" accept="image/*" /></label><label className="file-action"><Video />Video<input hidden type="file" accept="video/*" /></label><button disabled={create.isPending || !text.trim()} onClick={() => create.mutate({ body: text.trim() })}>{create.isPending ? 'Sending…' : 'Send'} <Send /></button></div></div><AsyncBoundary isLoading={query.isLoading} error={query.error} data={posts} onRetry={query.refetch}>{posts.map((post) => <MemberCard post={post} key={post.id} />)}</AsyncBoundary></div><aside><h2><Calendar /> TRENDING</h2>{posts.slice(0, 3).map((post) => <article key={post.id}><b>{post.body.slice(0, 28)}…</b><span><Eye />{post.reactions + post.comments} interactions</span></article>)}</aside></section>; }
+function MemberCard({ post }) {
+  const [liked, setLiked] = useState(false);
+  const [open, setOpen] = useState(false);
+  return (
+    <article className={`member-card ${open ? 'thread-open' : ''}`}>
+      <div>
+        <Avatar />
+        <h3>{post.author}</h3>
+        {post.tier && <b className={post.tier.toLowerCase()}>{post.tier}</b>}
+      </div>
+      <p>{post.body}</p>
+      <small>
+        <button className="bare-action" onClick={() => setLiked(!liked)}>
+          <Heart fill={liked ? '#d90008' : 'none'} />
+          {post.reactions + (liked ? 1 : 0)}
+        </button>
+        <button className="bare-action" onClick={() => setOpen(!open)} aria-expanded={open}>
+          <MessageSquare />
+          {post.comments} {open ? 'Hide' : 'Comments'}
+        </button>
+      </small>
+      {open && <PostThread post={post} />}
+    </article>
+  );
+}
+function Forum() {
+  const [text, setText] = useState(() => localStorage.getItem('nh.forumDraft') || '');
+  const qc = useQueryClient();
+  useEffect(() => localStorage.setItem('nh.forumDraft', text), [text]);
+  const query = useQuery({
+    queryKey: queryKeys.posts(),
+    queryFn: () => dataService.community.posts(),
+  });
+  const create = useMutation({
+    mutationFn: dataService.community.createPost,
+    onSuccess: () => {
+      setText('');
+      localStorage.removeItem('nh.forumDraft');
+      qc.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+  const posts = query.data?.items || [];
+  return (
+    <section className="forum-view">
+      <div className="forum-main">
+        <h2>
+          <Calendar /> COMMUNITY FORUM
+        </h2>
+        <div className="forum-composer">
+          <textarea
+            maxLength="500"
+            placeholder="Write in the forum..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <div>
+            <span className="composer-count">{text.length}/500</span>
+            <label className="file-action">
+              <Image />
+              Photo
+              <input hidden type="file" accept="image/*" />
+            </label>
+            <label className="file-action">
+              <Video />
+              Video
+              <input hidden type="file" accept="video/*" />
+            </label>
+            <button
+              disabled={create.isPending || !text.trim()}
+              onClick={() => create.mutate({ body: text.trim() })}
+            >
+              {create.isPending ? 'Sending…' : 'Send'} <Send />
+            </button>
+          </div>
+        </div>
+        <AsyncBoundary
+          isLoading={query.isLoading}
+          error={query.error}
+          data={posts}
+          onRetry={query.refetch}
+        >
+          {posts.map((post) => (
+            <MemberCard post={post} key={post.id} />
+          ))}
+        </AsyncBoundary>
+      </div>
+      <aside>
+        <h2>
+          <Calendar /> TRENDING
+        </h2>
+        {posts.slice(0, 3).map((post) => (
+          <article key={post.id}>
+            <b>{post.body.slice(0, 28)}…</b>
+            <span>
+              <Eye />
+              {post.reactions + post.comments} interactions
+            </span>
+          </article>
+        ))}
+      </aside>
+    </section>
+  );
+}
 
-function MessageComposer({ onSend, pending, failedBody, onRetry }) { const [value, setValue] = useState(''); const send = () => { if (!value.trim() || pending) return; onSend(value.trim()); setValue(''); }; return <div className="comment-box"><input placeholder="Write a message..." value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && send()} /><button disabled={pending} onClick={send}><Send /></button>{failedBody && <button className="retry-message" onClick={onRetry}>Retry</button>}</div>; }
+function MessageComposer({ onSend, pending, failedBody, onRetry }) {
+  const [value, setValue] = useState('');
+  const send = () => {
+    if (!value.trim() || pending) return;
+    onSend(value.trim());
+    setValue('');
+  };
+  return (
+    <div className="comment-box">
+      <input
+        placeholder="Write a message..."
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && send()}
+      />
+      <button disabled={pending} onClick={send}>
+        <Send />
+      </button>
+      {failedBody && (
+        <button className="retry-message" onClick={onRetry}>
+          Retry
+        </button>
+      )}
+    </div>
+  );
+}
 function Chat() {
-  const qc = useQueryClient(); const [selected, setSelected] = useState(''); const [failedBody, setFailedBody] = useState('');
-  const conversations = useQuery({ queryKey: queryKeys.conversations, queryFn: () => dataService.chat.conversations() }); const list = conversations.data?.items || [];
-  const messages = useQuery({ queryKey: ['messages', selected], queryFn: () => dataService.chat.messages(selected), enabled: Boolean(selected), refetchInterval: 15_000 });
-  const read = useMutation({ mutationFn: dataService.chat.markRead, onSuccess: () => { qc.invalidateQueries({ queryKey: queryKeys.conversations }); qc.invalidateQueries({ queryKey: ['messages', selected] }); } });
-  const choose = (id) => { setSelected(id); read.mutate(id); };
-  const send = useMutation({ mutationFn: (body) => dataService.chat.send(selected, body), onMutate: () => setFailedBody(''), onSuccess: () => qc.invalidateQueries({ queryKey: ['messages', selected] }), onError: (_error, body) => setFailedBody(body) });
-  const grouped = []; let lastDay = ''; for (const item of messages.data?.items || []) { const day = new Date(item.createdAt).toLocaleDateString(); if (day !== lastDay) { grouped.push({ day }); lastDay = day; } grouped.push(item); }
+  const qc = useQueryClient();
+  const [selected, setSelected] = useState('');
+  const [failedBody, setFailedBody] = useState('');
+  const conversations = useQuery({
+    queryKey: queryKeys.conversations,
+    queryFn: () => dataService.chat.conversations(),
+  });
+  const list = conversations.data?.items || [];
+  const messages = useQuery({
+    queryKey: ['messages', selected],
+    queryFn: () => dataService.chat.messages(selected),
+    enabled: Boolean(selected),
+    refetchInterval: 15_000,
+  });
+  const read = useMutation({
+    mutationFn: dataService.chat.markRead,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.conversations });
+      qc.invalidateQueries({ queryKey: ['messages', selected] });
+    },
+  });
+  const choose = (id) => {
+    setSelected(id);
+    read.mutate(id);
+  };
+  const send = useMutation({
+    mutationFn: (body) => dataService.chat.send(selected, body),
+    onMutate: () => setFailedBody(''),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['messages', selected] }),
+    onError: (_error, body) => setFailedBody(body),
+  });
+  const grouped = [];
+  let lastDay = '';
+  for (const item of messages.data?.items || []) {
+    const day = new Date(item.createdAt).toLocaleDateString();
+    if (day !== lastDay) {
+      grouped.push({ day });
+      lastDay = day;
+    }
+    grouped.push(item);
+  }
   const active = list.find((item) => item.id === selected);
-  return <section className={`chat-view ${selected ? 'mobile-room-open' : ''}`}><aside><h2>CONVERSATIONS</h2>{list.map((item) => <button onClick={() => choose(item.id)} className={selected === item.id ? 'selected' : ''} key={item.id}><Avatar /><span><b>{item.title}</b><small>{item.unreadCount > 0 ? `${item.unreadCount} unread` : 'Up to date'}</small></span>{item.unreadCount > 0 && <em className="unread-badge">{item.unreadCount}</em>}</button>)}</aside><div className="chat-room">{selected ? <><header className="chat-mobile-header"><button onClick={() => setSelected('')}><ArrowLeft /></button><b>{active?.title}</b></header>{grouped.map((item, index) => item.day ? <span className="date-divider" key={`${item.day}-${index}`}>{item.day}</span> : <div className={`bubble ${item.senderId === 'user-1' ? 'sent' : 'received'}`} key={item.id}><p>{item.body}</p><small>{new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}{item.senderId === 'user-1' && <span>{item.status === 'read' ? <CheckCheck /> : <Check />}{item.status}</span>}</small></div>)}{send.isPending && <div className="bubble sent pending"><p>{send.variables}</p><small>Sending…</small></div>}<MessageComposer pending={send.isPending} failedBody={failedBody} onRetry={() => send.mutate(failedBody)} onSend={(body) => send.mutate(body)} /></> : <div className="chat-empty"><MessageSquare /><h3>Select a conversation</h3><p>Choose a chat to view messages.</p></div>}</div></section>;
+  return (
+    <section className={`chat-view ${selected ? 'mobile-room-open' : ''}`}>
+      <aside>
+        <h2>CONVERSATIONS</h2>
+        {list.map((item) => (
+          <button
+            onClick={() => choose(item.id)}
+            className={selected === item.id ? 'selected' : ''}
+            key={item.id}
+          >
+            <Avatar />
+            <span>
+              <b>{item.title}</b>
+              <small>{item.unreadCount > 0 ? `${item.unreadCount} unread` : 'Up to date'}</small>
+            </span>
+            {item.unreadCount > 0 && <em className="unread-badge">{item.unreadCount}</em>}
+          </button>
+        ))}
+      </aside>
+      <div className="chat-room">
+        {selected ? (
+          <>
+            <header className="chat-mobile-header">
+              <button onClick={() => setSelected('')}>
+                <ArrowLeft />
+              </button>
+              <b>{active?.title}</b>
+            </header>
+            {grouped.map((item, index) =>
+              item.day ? (
+                <span className="date-divider" key={`${item.day}-${index}`}>
+                  {item.day}
+                </span>
+              ) : (
+                <div
+                  className={`bubble ${item.senderId === 'user-1' ? 'sent' : 'received'}`}
+                  key={item.id}
+                >
+                  <p>{item.body}</p>
+                  <small>
+                    {new Date(item.createdAt).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                    {item.senderId === 'user-1' && (
+                      <span>
+                        {item.status === 'read' ? <CheckCheck /> : <Check />}
+                        {item.status}
+                      </span>
+                    )}
+                  </small>
+                </div>
+              )
+            )}
+            {send.isPending && (
+              <div className="bubble sent pending">
+                <p>{send.variables}</p>
+                <small>Sending…</small>
+              </div>
+            )}
+            <MessageComposer
+              pending={send.isPending}
+              failedBody={failedBody}
+              onRetry={() => send.mutate(failedBody)}
+              onSend={(body) => send.mutate(body)}
+            />
+          </>
+        ) : (
+          <div className="chat-empty">
+            <MessageSquare />
+            <h3>Select a conversation</h3>
+            <p>Choose a chat to view messages.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
-function LiveTrade() { const query = useQuery({ queryKey: ['live-session'], queryFn: dataService.community.liveSession }); const live = query.data; return <AsyncBoundary isLoading={query.isLoading} error={query.error} data={live} onRetry={query.refetch}>{live && <section className="live-view"><div className="live-manage"><h2>{live.title}</h2></div><div className="live-screen"><span>● {live.status.toUpperCase()}</span><span><Eye />{live.viewerCount}</span><iframe src={live.embedUrl} title={live.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /></div></section>}</AsyncBoundary>; }
+function LiveTrade() {
+  const session = readSession();
+  const canManage = ['admin', 'super-admin'].includes(session?.user?.role);
+  const query = useQuery({
+    queryKey: ['live-session'],
+    queryFn: dataService.community.liveSession,
+    refetchInterval: 30_000,
+  });
+  const live = query.data;
+  return (
+    <AsyncBoundary
+      isLoading={query.isLoading}
+      error={query.error}
+      data={live}
+      onRetry={query.refetch}
+    >
+      {live && (
+        <section className="live-view">
+          <div className="live-manage">
+            <h2>{live.title}</h2>
+            {canManage && (
+              <div className="live-status" role="status">
+                <span
+                  className={`live-status-indicator ${live.status === 'live' ? 'is-live' : ''}`}
+                />
+                <div>
+                  <strong>
+                    {live.status === 'live'
+                      ? 'Live now'
+                      : live.setupReady
+                        ? 'Ready to broadcast'
+                        : 'Live stream setup pending'}
+                  </strong>
+                  <p>
+                    {live.status === 'live'
+                      ? 'Members can watch this broadcast now.'
+                      : live.setupReady
+                        ? 'Start streaming in OBS. The video will appear here automatically.'
+                        : 'The website team is connecting the live stream.'}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+          {live.playbackUrl ? (
+            <div className="live-screen">
+              <span>● LIVE</span>
+              <iframe
+                src={live.playbackUrl}
+                title={live.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <div className="live-empty">
+              <Video aria-hidden="true" />
+              <h3>No video is being shared right now</h3>
+              <p>
+                {canManage
+                  ? live.setupReady
+                    ? 'Start streaming in OBS when you are ready.'
+                    : 'Live Trade is being set up. Check back soon.'
+                  : 'Check back here when the team starts a broadcast.'}
+              </p>
+            </div>
+          )}
+        </section>
+      )}
+    </AsyncBoundary>
+  );
+}
 
-function AnnouncementDetail({ item, onClose }) { return <div className="community-modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}><article className="announcement-detail" role="dialog" aria-modal="true" aria-labelledby="announcement-title"><button onClick={onClose} aria-label="Close announcement"><X /></button>{item.pinned && <span>PINNED</span>}<h2 id="announcement-title">{item.title}</h2><time>{new Date(item.publishedAt).toLocaleString()}</time><p>{item.body}</p><footer>Published by {item.author}</footer></article></div>; }
-function Notice({ item, onOpen }) { return <button className="notice" onClick={() => onOpen(item)}><h3>{item.title}</h3><time>{new Date(item.publishedAt).toLocaleString()}</time><p>{item.body}</p><b>{item.author}</b></button>; }
-function InfoView() {
-  const session = readSession(); const canPublish = ['admin', 'super-admin'].includes(session?.user?.role); const qc = useQueryClient(); const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [selected, setSelected] = useState(null); const [error, setError] = useState('');
-  const query = useQuery({ queryKey: queryKeys.announcements, queryFn: () => dataService.announcements.list() }); const create = useMutation({ mutationFn: dataService.announcements.create, onSuccess: () => { setTitle(''); setBody(''); setError(''); qc.invalidateQueries({ queryKey: ['announcements'] }); }, onError: (failure) => setError(apiError(failure)) });
-  const open = (item) => { setSelected(item); dataService.announcements.markRead(item.id).catch(() => {}); };
-  const notices = [...(query.data?.items || [])].sort((a, b) => Number(b.pinned) - Number(a.pinned) || new Date(b.publishedAt) - new Date(a.publishedAt));
-  return <section className="info-view">{canPublish ? <div className="announcement-form"><div><h2>ANNOUNCEMENTS</h2><button onClick={() => document.querySelector('.announcement-form input')?.focus()}><Plus />Create Announcement</button></div><input maxLength="100" placeholder="Announcement title" value={title} onChange={(e) => setTitle(e.target.value)} /><div className="announcement-body"><textarea maxLength="1000" placeholder="Announcement body" value={body} onChange={(e) => setBody(e.target.value)} />{error && <p className="community-error">{error}</p>}<button disabled={create.isPending || !title.trim() || !body.trim()} onClick={() => create.mutate({ title: title.trim(), body: body.trim() })}>Publish <Send /></button></div></div> : <div className="info-heading"><h2>ANNOUNCEMENTS</h2><p>Official NH Terminal updates.</p></div>}<AsyncBoundary isLoading={query.isLoading} error={query.error} data={notices} onRetry={query.refetch}><div className="notices">{notices.map((item) => <Notice item={item} onOpen={open} key={item.id} />)}</div></AsyncBoundary>{selected && <AnnouncementDetail item={selected} onClose={() => setSelected(null)} />}</section>;
+function AnnouncementDetail({ item, onClose }) {
+  return (
+    <div
+      className="community-modal-backdrop"
+      onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <article
+        className="announcement-detail"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="announcement-title"
+      >
+        <button onClick={onClose} aria-label="Close announcement">
+          <X />
+        </button>
+        {item.pinned && <span>PINNED</span>}
+        <h2 id="announcement-title">{item.title}</h2>
+        <time>{new Date(item.publishedAt).toLocaleString()}</time>
+        <p>{item.body}</p>
+        <footer>Published by {item.author}</footer>
+      </article>
+    </div>
+  );
 }
-export default function CommunityPage() { const [params, setParams] = useSearchParams(); const value = params.get('tab'); const active = ['forum', 'live', 'chat', 'info'].includes(value) ? value : 'forum'; const setActive = (tab) => setParams({ tab }); return <div className="community-page"><Header active={active} setActive={setActive} />{active === 'forum' && <Forum />}{active === 'live' && <LiveTrade />}{active === 'chat' && <Chat />}{active === 'info' && <InfoView />}</div>; }
+function Notice({ item, onOpen }) {
+  return (
+    <button className="notice" onClick={() => onOpen(item)}>
+      <h3>{item.title}</h3>
+      <time>{new Date(item.publishedAt).toLocaleString()}</time>
+      <p>{item.body}</p>
+      <b>{item.author}</b>
+    </button>
+  );
+}
+function InfoView() {
+  const session = readSession();
+  const canPublish = ['admin', 'super-admin'].includes(session?.user?.role);
+  const qc = useQueryClient();
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [selected, setSelected] = useState(null);
+  const [error, setError] = useState('');
+  const query = useQuery({
+    queryKey: queryKeys.announcements,
+    queryFn: () => dataService.announcements.list(),
+  });
+  const create = useMutation({
+    mutationFn: dataService.announcements.create,
+    onSuccess: () => {
+      setTitle('');
+      setBody('');
+      setError('');
+      qc.invalidateQueries({ queryKey: ['announcements'] });
+    },
+    onError: (failure) => setError(apiError(failure)),
+  });
+  const open = (item) => {
+    setSelected(item);
+    dataService.announcements.markRead(item.id).catch(() => {});
+  };
+  const notices = [...(query.data?.items || [])].sort(
+    (a, b) =>
+      Number(b.pinned) - Number(a.pinned) || new Date(b.publishedAt) - new Date(a.publishedAt)
+  );
+  return (
+    <section className="info-view">
+      {canPublish ? (
+        <div className="announcement-form">
+          <div>
+            <h2>ANNOUNCEMENTS</h2>
+            <button onClick={() => document.querySelector('.announcement-form input')?.focus()}>
+              <Plus />
+              Create Announcement
+            </button>
+          </div>
+          <input
+            maxLength="100"
+            placeholder="Announcement title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <div className="announcement-body">
+            <textarea
+              maxLength="1000"
+              placeholder="Announcement body"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+            />
+            {error && <p className="community-error">{error}</p>}
+            <button
+              disabled={create.isPending || !title.trim() || !body.trim()}
+              onClick={() => create.mutate({ title: title.trim(), body: body.trim() })}
+            >
+              Publish <Send />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="info-heading">
+          <h2>ANNOUNCEMENTS</h2>
+          <p>Official NH Terminal updates.</p>
+        </div>
+      )}
+      <AsyncBoundary
+        isLoading={query.isLoading}
+        error={query.error}
+        data={notices}
+        onRetry={query.refetch}
+      >
+        <div className="notices">
+          {notices.map((item) => (
+            <Notice item={item} onOpen={open} key={item.id} />
+          ))}
+        </div>
+      </AsyncBoundary>
+      {selected && <AnnouncementDetail item={selected} onClose={() => setSelected(null)} />}
+    </section>
+  );
+}
+export default function CommunityPage() {
+  const [params, setParams] = useSearchParams();
+  const value = params.get('tab');
+  const active = ['forum', 'live', 'chat', 'info'].includes(value) ? value : 'forum';
+  const setActive = (tab) => setParams({ tab });
+  return (
+    <div className="community-page">
+      <Header active={active} setActive={setActive} />
+      {active === 'forum' && <Forum />}
+      {active === 'live' && <LiveTrade />}
+      {active === 'chat' && <Chat />}
+      {active === 'info' && <InfoView />}
+    </div>
+  );
+}

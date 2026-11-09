@@ -4,7 +4,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-package-lock.json
 yarn.lock
 
 # Production
@@ -56,3 +55,7 @@ build/
 # IDE Settings (Optional - comment out if you want to commit these)
 # .vscode/settings.json
 # .idea/workspace.xml
+test-results/
+playwright-report/
+.backups/
+.local-ai/

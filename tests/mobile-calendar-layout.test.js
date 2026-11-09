@@ -15,9 +15,10 @@ describe('mobile calendar layout regression', () => {
 
   test('calendar details and mobile dropdowns remain responsive', async () => {
     const css = await readFile('src/components/Market/market.css', 'utf8');
+    const compactCss = css.replace(/\s+/g, '');
     expect(css).toContain('.event-details');
     expect(css).toContain('.calendar-data-state');
     expect(css).toContain('.calendar-filters select');
-    expect(css).toContain('grid-template-columns:1fr');
+    expect(compactCss).toContain('grid-template-columns:1fr');
   });
 });

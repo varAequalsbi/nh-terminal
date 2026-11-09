@@ -12,31 +12,34 @@ export default function SignalCard({ signal }) {
       <div className="flex items-center justify-between mb-4 pb-4 border-b border-bg-tertiary">
         <div className="flex items-center gap-2">
           {/* Type Badge */}
-          <div className={`px-3 py-1 font-bold text-white text-xs ${
-            isBuy ? 'bg-color-success' : 'bg-color-danger'
-          }`}>
+          <div
+            className={`px-3 py-1 font-bold text-white text-xs ${
+              isBuy ? 'bg-color-success' : 'bg-color-danger'
+            }`}
+          >
             {signal.type}
           </div>
-          
+
           {/* Pair */}
           <span className="text-sm font-semibold text-text-primary">{signal.pair}</span>
-          
+
           {/* Session */}
           <span className="text-xs text-text-secondary">{signal.session}</span>
-          
+
           {/* Live Badge */}
-          {isLive && (
-            <span className="text-xs font-semibold text-cyan-400">● LIVE</span>
-          )}
+          {isLive && <span className="text-xs font-semibold text-cyan-400">● LIVE</span>}
         </div>
 
         {/* Pips Badge */}
-        <div className={`px-3 py-1 font-bold text-white text-xs border ${
-          isPositivePips 
-            ? 'bg-color-success bg-opacity-20 border-color-success text-color-success' 
-            : 'bg-color-danger bg-opacity-20 border-color-danger text-color-danger'
-        }`}>
-          {isPositivePips ? '+' : ''}{signal.pipsGain} Pips
+        <div
+          className={`px-3 py-1 font-bold text-white text-xs border ${
+            isPositivePips
+              ? 'bg-color-success bg-opacity-20 border-color-success text-color-success'
+              : 'bg-color-danger bg-opacity-20 border-color-danger text-color-danger'
+          }`}
+        >
+          {isPositivePips ? '+' : ''}
+          {signal.pipsGain} Pips
         </div>
       </div>
 
@@ -75,7 +78,13 @@ export default function SignalCard({ signal }) {
                   vectorEffect="non-scaling-stroke"
                 />
                 <defs>
-                  <linearGradient id={`gradient-buy-${signal.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id={`gradient-buy-${signal.id}`}
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
                     <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
                   </linearGradient>
@@ -95,7 +104,13 @@ export default function SignalCard({ signal }) {
                   vectorEffect="non-scaling-stroke"
                 />
                 <defs>
-                  <linearGradient id={`gradient-sell-${signal.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <linearGradient
+                    id={`gradient-sell-${signal.id}`}
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
                     <stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" />
                     <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
                   </linearGradient>
@@ -114,9 +129,7 @@ export default function SignalCard({ signal }) {
       <div className="pt-4 border-t border-bg-tertiary">
         <div className="flex items-center justify-between text-xs">
           <div>
-            <div className="text-text-secondary mb-1">
-              Published - {signal.published}
-            </div>
+            <div className="text-text-secondary mb-1">Published - {signal.published}</div>
             <div className="flex items-center gap-1 text-text-tertiary">
               <span>●</span>
               <span>{signal.status === 'LIVE' ? 'Running' : signal.status}</span>

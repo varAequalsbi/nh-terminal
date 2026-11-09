@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bell, CheckCircle2, LockKeyhole, Save, UserRound } from 'lucide-react';
+import {
+  Bell,
+  CheckCircle2,
+  Laptop,
+  LockKeyhole,
+  Save,
+  ShieldCheck,
+  UserRound,
+} from 'lucide-react';
 import { authService } from '../../services/authService';
 import { dataService, queryKeys } from '../../services/dataService';
 import { AsyncBoundary } from '../Common/AsyncStates';
@@ -15,18 +23,25 @@ const defaultPreferences = {
 
 function Status({ value }) {
   if (!value) return null;
-  return <p className={`settings-status ${value.type}`} role="status"><CheckCircle2 />{value.message}</p>;
+  return (
+    <p className={`settings-status ${value.type}`} role="status">
+      <CheckCircle2 />
+      {value.message}
+    </p>
+  );
 }
 
 export default function SettingsPage({ onSessionUpdate }) {
   const queryClient = useQueryClient();
   const profileQuery = useQuery({ queryKey: queryKeys.me, queryFn: dataService.users.me });
+  const sessionsQuery = useQuery({ queryKey: ['auth-sessions'], queryFn: authService.getSessions });
   const [profile, setProfile] = useState({ name: '', username: '', email: '' });
   const [preferences, setPreferences] = useState(defaultPreferences);
   const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [profileStatus, setProfileStatus] = useState(null);
   const [preferenceStatus, setPreferenceStatus] = useState(null);
   const [passwordStatus, setPasswordStatus] = useState(null);
+  const [sessionStatus, setSessionStatus] = useState(null);
 
   useEffect(() => {
     if (!profileQuery.data) return;
@@ -45,12 +60,20 @@ export default function SettingsPage({ onSessionUpdate }) {
       onSessionUpdate?.(user);
       setProfileStatus({ type: 'success', message: 'Profile saved.' });
     },
-    onError: (error) => setProfileStatus({ type: 'error', message: error.response?.data?.message || 'Unable to save profile.' }),
+    onError: (error) =>
+      setProfileStatus({
+        type: 'error',
+        message: error.response?.data?.message || 'Unable to save profile.',
+      }),
   });
   const savePreferences = useMutation({
     mutationFn: () => authService.updatePreferences(preferences),
     onSuccess: () => setPreferenceStatus({ type: 'success', message: 'Preferences saved.' }),
-    onError: (error) => setPreferenceStatus({ type: 'error', message: error.response?.data?.message || 'Unable to save preferences.' }),
+    onError: (error) =>
+      setPreferenceStatus({
+        type: 'error',
+        message: error.response?.data?.message || 'Unable to save preferences.',
+      }),
   });
   const savePassword = useMutation({
     mutationFn: () => authService.updatePassword(passwords.current, passwords.next),
@@ -58,50 +81,237 @@ export default function SettingsPage({ onSessionUpdate }) {
       setPasswords({ current: '', next: '', confirm: '' });
       setPasswordStatus({ type: 'success', message: result.message || 'Password updated.' });
     },
-    onError: (error) => setPasswordStatus({ type: 'error', message: error.response?.data?.message || 'Unable to update password.' }),
+    onError: (error) =>
+      setPasswordStatus({
+        type: 'error',
+        message: error.response?.data?.message || 'Unable to update password.',
+      }),
+  });
+  const revokeSessions = useMutation({
+    mutationFn: authService.revokeOtherSessions,
+    onSuccess: (result) => {
+      sessionsQuery.refetch();
+      setSessionStatus({
+        type: 'success',
+        message: `${result.revoked} other session${result.revoked === 1 ? '' : 's'} revoked.`,
+      });
+    },
+    onError: (error) =>
+      setSessionStatus({
+        type: 'error',
+        message: error.response?.data?.message || 'Unable to revoke sessions.',
+      }),
   });
 
   const submitPassword = (event) => {
     event.preventDefault();
     setPasswordStatus(null);
-    if (passwords.next.length < 8) return setPasswordStatus({ type: 'error', message: 'New password must be at least 8 characters.' });
-    if (passwords.next !== passwords.confirm) return setPasswordStatus({ type: 'error', message: 'New passwords do not match.' });
+    if (passwords.next.length < 12)
+      return setPasswordStatus({
+        type: 'error',
+        message: 'New password must be at least 12 characters.',
+      });
+    if (passwords.next !== passwords.confirm)
+      return setPasswordStatus({ type: 'error', message: 'New passwords do not match.' });
     savePassword.mutate();
   };
 
   return (
-    <AsyncBoundary isLoading={profileQuery.isLoading} error={profileQuery.error} data={profileQuery.data} onRetry={profileQuery.refetch}>
+    <AsyncBoundary
+      isLoading={profileQuery.isLoading}
+      error={profileQuery.error}
+      data={profileQuery.data}
+      onRetry={profileQuery.refetch}
+    >
       <div className="settings-page">
-        <header className="settings-heading"><h1>ACCOUNT SETTINGS</h1><p>Manage your NH Terminal demo account.</p></header>
+        <header className="settings-heading">
+          <h1>ACCOUNT SETTINGS</h1>
+          <p>Manage your NH Terminal demo account.</p>
+        </header>
         <div className="settings-grid">
-          <form className="settings-card" onSubmit={(event) => { event.preventDefault(); setProfileStatus(null); saveProfile.mutate(); }}>
-            <h2><UserRound /> Profile</h2>
-            <label>Full name<input value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} required /></label>
-            <label>Username<input value={profile.username} onChange={(e) => setProfile({ ...profile, username: e.target.value })} required /></label>
-            <label>Email<input type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} required /></label>
+          <form
+            className="settings-card"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setProfileStatus(null);
+              saveProfile.mutate();
+            }}
+          >
+            <h2>
+              <UserRound /> Profile
+            </h2>
+            <label>
+              Full name
+              <input
+                value={profile.name}
+                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              Username
+              <input
+                value={profile.username}
+                onChange={(e) => setProfile({ ...profile, username: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              Email
+              <input
+                type="email"
+                value={profile.email}
+                onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                required
+              />
+            </label>
             <Status value={profileStatus} />
-            <button className="settings-save" disabled={saveProfile.isPending}><Save />{saveProfile.isPending ? 'Saving…' : 'Save Profile'}</button>
+            <button className="settings-save" disabled={saveProfile.isPending}>
+              <Save />
+              {saveProfile.isPending ? 'Saving…' : 'Save Profile'}
+            </button>
           </form>
 
           <form className="settings-card" onSubmit={submitPassword}>
-            <h2><LockKeyhole /> Password</h2>
-            <label>Current password<input type="password" autoComplete="current-password" value={passwords.current} onChange={(e) => setPasswords({ ...passwords, current: e.target.value })} required /></label>
-            <label>New password<input type="password" autoComplete="new-password" minLength="8" value={passwords.next} onChange={(e) => setPasswords({ ...passwords, next: e.target.value })} required /></label>
-            <label>Confirm new password<input type="password" autoComplete="new-password" minLength="8" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} required /></label>
-            <small>At least 8 characters.</small>
+            <h2>
+              <LockKeyhole /> Password
+            </h2>
+            <label>
+              Current password
+              <input
+                type="password"
+                autoComplete="current-password"
+                value={passwords.current}
+                onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              New password
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength="12"
+                value={passwords.next}
+                onChange={(e) => setPasswords({ ...passwords, next: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              Confirm new password
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength="12"
+                value={passwords.confirm}
+                onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
+                required
+              />
+            </label>
+            <small>At least 12 characters.</small>
             <Status value={passwordStatus} />
-            <button className="settings-save" disabled={savePassword.isPending}><Save />{savePassword.isPending ? 'Updating…' : 'Update Password'}</button>
+            <button className="settings-save" disabled={savePassword.isPending}>
+              <Save />
+              {savePassword.isPending ? 'Updating…' : 'Update Password'}
+            </button>
           </form>
 
-          <form className="settings-card preferences-card" onSubmit={(event) => { event.preventDefault(); setPreferenceStatus(null); savePreferences.mutate(); }}>
-            <h2><Bell /> Preferences</h2>
-            <label>Language<select value={preferences.language} onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></label>
-            <label className="toggle-row"><span><b>Signal emails</b><small>Updates for newly published signals.</small></span><input type="checkbox" checked={preferences.emailSignals} onChange={(e) => setPreferences({ ...preferences, emailSignals: e.target.checked })} /></label>
-            <label className="toggle-row"><span><b>Announcement emails</b><small>Important platform and community news.</small></span><input type="checkbox" checked={preferences.emailAnnouncements} onChange={(e) => setPreferences({ ...preferences, emailAnnouncements: e.target.checked })} /></label>
-            <label className="toggle-row"><span><b>Browser notifications</b><small>Demo preference; browser permission integration comes later.</small></span><input type="checkbox" checked={preferences.browserNotifications} onChange={(e) => setPreferences({ ...preferences, browserNotifications: e.target.checked })} /></label>
+          <form
+            className="settings-card preferences-card"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setPreferenceStatus(null);
+              savePreferences.mutate();
+            }}
+          >
+            <h2>
+              <Bell /> Preferences
+            </h2>
+            <label>
+              Language
+              <select
+                value={preferences.language}
+                onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}
+              >
+                <option value="id">Bahasa Indonesia</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label className="toggle-row">
+              <span>
+                <b>Signal emails</b>
+                <small>Updates for newly published signals.</small>
+              </span>
+              <input
+                type="checkbox"
+                checked={preferences.emailSignals}
+                onChange={(e) => setPreferences({ ...preferences, emailSignals: e.target.checked })}
+              />
+            </label>
+            <label className="toggle-row">
+              <span>
+                <b>Announcement emails</b>
+                <small>Important platform and community news.</small>
+              </span>
+              <input
+                type="checkbox"
+                checked={preferences.emailAnnouncements}
+                onChange={(e) =>
+                  setPreferences({ ...preferences, emailAnnouncements: e.target.checked })
+                }
+              />
+            </label>
+            <label className="toggle-row">
+              <span>
+                <b>Browser notifications</b>
+                <small>Demo preference; browser permission integration comes later.</small>
+              </span>
+              <input
+                type="checkbox"
+                checked={preferences.browserNotifications}
+                onChange={(e) =>
+                  setPreferences({ ...preferences, browserNotifications: e.target.checked })
+                }
+              />
+            </label>
             <Status value={preferenceStatus} />
-            <button className="settings-save" disabled={savePreferences.isPending}><Save />{savePreferences.isPending ? 'Saving…' : 'Save Preferences'}</button>
+            <button className="settings-save" disabled={savePreferences.isPending}>
+              <Save />
+              {savePreferences.isPending ? 'Saving…' : 'Save Preferences'}
+            </button>
           </form>
+
+          <section className="settings-card sessions-card">
+            <h2>
+              <ShieldCheck /> Active Sessions
+            </h2>
+            <p className="settings-copy">Review browsers currently signed in to this account.</p>
+            {sessionsQuery.isLoading && <small>Loading sessions…</small>}
+            {sessionsQuery.data?.items?.map((item) => (
+              <article className="session-row" key={item.id}>
+                <Laptop />
+                <span>
+                  <b>{item.current ? 'This browser' : 'Other browser'}</b>
+                  <small>{item.userAgent}</small>
+                  <small>Last active {new Date(item.lastSeenAt).toLocaleString()}</small>
+                </span>
+                {item.current && <em>Current</em>}
+              </article>
+            ))}
+            <Status value={sessionStatus} />
+            <button
+              type="button"
+              className="settings-save"
+              disabled={revokeSessions.isPending}
+              onClick={() => {
+                setSessionStatus(null);
+                revokeSessions.mutate();
+              }}
+            >
+              <LockKeyhole />
+              {revokeSessions.isPending ? 'Revoking…' : 'Revoke Other Sessions'}
+            </button>
+          </section>
         </div>
       </div>
     </AsyncBoundary>

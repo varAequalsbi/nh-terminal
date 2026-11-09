@@ -37,12 +37,16 @@ production-ready application.
 
 ## 3. Authentication flows
 
-- [ ] Connect login to the authentication API and securely persist the returned session.
-- [ ] Add sign-up with email verification and acceptance of legal documents.
-- [ ] Build forgot-password, reset-password, and expired-link screens.
+- [x] Connect login to the authentication API and securely persist the returned session.
+- [x] Add a working local sign-up screen backed by PostgreSQL.
+- [ ] Add production sign-up email verification and acceptance of legal documents.
+- [x] Add a local Mailpit-backed verification screen, expiring-link handling, resend action, and pending-account recovery path.
+- [x] Build local forgot-password/reset-password flow with expired-token errors.
+- [ ] Connect production password recovery to verified email delivery.
 - [ ] Add show/hide password, Caps Lock feedback, password rules, and accessible validation summaries.
 - [x] Disable duplicate login submissions and show actionable server error messages.
 - [ ] Add optional remember-me behavior if supported by the backend.
+- [x] Refresh active browser sessions on a configurable interval using rotated HTTP-only cookies.
 - [ ] Add session-expired handling that preserves the intended destination after login.
 - [ ] Add optional MFA enrollment and verification UI for administrators.
 - [ ] Add rate-limit feedback without revealing whether an account exists.
@@ -70,14 +74,15 @@ production-ready application.
 - [ ] Add pagination or cursor-based infinite scrolling.
 - [x] Make “View History” show completed, cancelled, and expired signals.
 - [x] Add an accessible signal detail dialog with TradingView chart, metrics, analysis, and status history.
-- [x] Connect “Tambah Signal” and “Publish Signal” to role-aware demo create flows.
+- [x] Connect expert signal publishing to the role-aware API, with a review step before confirmation.
 - [x] Validate entry, stop loss, TP1, TP2, symbol, direction, session, analysis, and BUY/SELL price relationships on client and API.
 - [x] Add proper symbol and session selection to the signal form.
 - [x] Implement BUY/SELL segmented selection and clear selected-state feedback.
 - [ ] Implement chart upload with drag/drop, file picker, preview, replacement, validation, progress, and cancellation.
 - [x] Confirm before publishing; disable publishing while the mutation is pending.
-- [x] Add edit-analysis, close, cancel, and delete controls for experts/admins in the demo UI.
-- [x] Refresh running signal pip values every minute and record status transitions.
+- [x] Show the author and status history; let the owning expert or admin edit analysis, close with an execution price, or cancel with a reason.
+- [x] Let admins archive terminal signals with a reason and inspect them in a separate archive view.
+- [x] Display server-calculated pips from explicit execution prices and persisted status transitions; fabricated minute-by-minute pip movement has been removed.
 - [x] Add timed success/error notifications and safe query invalidation after mutations.
 - [x] Handle missing TP2, bounded analysis text, decimal prices, and negative/zero pip results.
 
@@ -111,6 +116,7 @@ production-ready application.
 - [ ] Connect Trending topics and view counts.
 - [ ] Add pagination/infinite scrolling and scroll restoration.
 - [ ] Add edit/delete/report/block actions based on ownership and role.
+- [x] Prepare owner-or-moderator backend authorization for post/comment edit and delete; frontend action controls remain above.
 - [ ] Add moderation and removed-content states.
 
 ## 8. Community Live Trade
@@ -202,7 +208,7 @@ production-ready application.
 
 ## 15. Frontend security and privacy
 
-- [ ] Never store long-lived secrets or sensitive tokens in `localStorage`.
+- [x] Never store long-lived secrets or sensitive tokens in `localStorage`; authentication uses an HTTP-only session cookie.
 - [ ] Treat role checks in the UI as presentation only; backend authorization remains mandatory.
 - [ ] Sanitize or safely render all user-generated rich text.
 - [ ] Restrict upload type/size on the client while repeating all validation on the server.
@@ -215,6 +221,7 @@ production-ready application.
 - [ ] Add unit tests for formatting, validation, tier calculations, filters, and state reducers.
 - [ ] Add component tests for forms, tabs, dropdowns, cards, and error/loading states.
 - [ ] Add end-to-end tests for login, logout, signals, market filters, posting, chat, announcements, and profile flows.
+- [x] Add Chromium coverage for login/logout, email-verified signup, role-gated controls, core navigation, signal/forum publishing, and chat access; detailed filter/announcement/profile mutations remain above.
 - [ ] Add responsive visual-regression tests for every supplied design screen.
 - [ ] Test authentication expiry, slow APIs, failed uploads, WebSocket reconnects, and duplicate submissions.
 - [ ] Run automated accessibility checks in CI.

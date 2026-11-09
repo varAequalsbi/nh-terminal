@@ -58,10 +58,7 @@
       "direction": "SELL",
       "entry": 4658.72,
       "stopLoss": 4672,
-      "targets": [
-        4642,
-        4627.28
-      ],
+      "targets": [4642, 4627.28],
       "status": "running",
       "result": "open",
       "pips": 0,
@@ -76,10 +73,7 @@
       "direction": "BUY",
       "entry": 1.1662,
       "stopLoss": 1.1622,
-      "targets": [
-        1.1702,
-        1.1742
-      ],
+      "targets": [1.1702, 1.1742],
       "status": "running",
       "result": "open",
       "pips": 25,
@@ -94,10 +88,7 @@
       "direction": "SELL",
       "entry": 1.349,
       "stopLoss": 1.354,
-      "targets": [
-        1.344,
-        1.339
-      ],
+      "targets": [1.344, 1.339],
       "status": "completed",
       "result": "loss",
       "pips": -50,
@@ -112,10 +103,7 @@
       "direction": "BUY",
       "entry": 147.2,
       "stopLoss": 146.7,
-      "targets": [
-        147.8,
-        148.4
-      ],
+      "targets": [147.8, 148.4],
       "status": "completed",
       "result": "win",
       "pips": 120,
@@ -171,16 +159,8 @@
     "author": "NH AI",
     "title": "XAUUSD: Consolidating near the current highs",
     "body": "Gold is trading around the 4,650 area. The local preview levels are aligned with the latest provider reference and should be replaced by licensed streaming data in production.",
-    "support": [
-      4642,
-      4627.28,
-      4605
-    ],
-    "resistance": [
-      4672,
-      4696,
-      4720
-    ],
+    "support": [4642, 4627.28, 4605],
+    "resistance": [4672, 4696, 4720],
     "sentiment": [
       {
         "symbol": "XAUUSD",
@@ -225,12 +205,7 @@
         "summary": "Volatility is expected around scheduled U.S. data."
       }
     ],
-    "drivers": [
-      "DXY Strength",
-      "Gold Pressure",
-      "NFP Ahead",
-      "JPY Weakness"
-    ],
+    "drivers": ["DXY Strength", "Gold Pressure", "NFP Ahead", "JPY Weakness"],
     "currentSession": "LONDON",
     "nextSession": "NEW YORK",
     "activity": "Moderate"
@@ -388,8 +363,8 @@
       "publishedAt": "2026-08-26T16:34:06.740Z",
       "pinned": false,
       "title": "this is a test announcement header",
-      "body": "this is a test announcement body"
-      ,"readBy": []
+      "body": "this is a test announcement body",
+      "readBy": []
     },
     {
       "id": "ann-1",
@@ -397,8 +372,8 @@
       "body": "Estimated volatility is 80–150 pips. Review open positions and risk limits.",
       "publishedAt": "2026-08-25T01:30:00.000Z",
       "author": "Admin NH",
-      "pinned": true
-      ,"readBy": []
+      "pinned": true,
+      "readBy": []
     },
     {
       "id": "ann-2",
@@ -406,8 +381,8 @@
       "body": "Eligible members can review their reward status from Profile.",
       "publishedAt": "2026-08-24T03:00:00.000Z",
       "author": "Admin NH",
-      "pinned": false
-      ,"readBy": []
+      "pinned": false,
+      "readBy": []
     }
   ],
   "courses": [

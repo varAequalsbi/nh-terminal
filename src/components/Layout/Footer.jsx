@@ -5,24 +5,33 @@ import { NHLogo } from './Header';
 import './layout.css';
 
 const groups = [
-  ['PRODUCT', [
-    ['Dashboard', '/dashboard'],
-    ['Signals', '/signal'],
-    ['Market', '/market'],
-    ['Economic Calendar', '/market?tab=calendar'],
-  ]],
-  ['COMMUNITY', [
-    ['Community', '/community'],
-    ['Live Trade', '/community?tab=live'],
-    ['Forum', '/community?tab=forum'],
-    ['Education', '/profile#education'],
-  ]],
-  ['SUPPORT', [
-    ['Help Center', '/help-center'],
-    ['FAQ', '/faq'],
-    ['Contact', '/contact'],
-    ['Privacy', '/privacy'],
-  ]],
+  [
+    'PRODUCT',
+    [
+      ['Dashboard', '/dashboard'],
+      ['Signals', '/signal'],
+      ['Market', '/market'],
+      ['Economic Calendar', '/market?tab=calendar'],
+    ],
+  ],
+  [
+    'COMMUNITY',
+    [
+      ['Community', '/community'],
+      ['Live Trade', '/community?tab=live'],
+      ['Forum', '/community?tab=forum'],
+      ['Education', '/profile#education'],
+    ],
+  ],
+  [
+    'SUPPORT',
+    [
+      ['Help Center', '/help-center'],
+      ['FAQ', '/faq'],
+      ['Contact', '/contact'],
+      ['Privacy', '/privacy'],
+    ],
+  ],
 ];
 
 export default function Footer() {
